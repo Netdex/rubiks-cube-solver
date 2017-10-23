@@ -5,15 +5,8 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
-#include "ckociemba/coordcube.h"
-#include "ckociemba/cubiecube.h"
-
-size_t strnlen(const char *str, size_t maxlen)
-{
-     size_t i;
-     for(i = 0; i < maxlen && str[i]; i++);
-     return i;
-}
+#include "coordcube.h"
+#include "cubiecube.h"
 
 short twistMove[N_TWIST][N_MOVE];
 short flipMove[N_FLIP][N_MOVE];

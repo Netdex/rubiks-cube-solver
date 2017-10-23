@@ -1,10 +1,10 @@
 #ifndef FACECUBE_H
 #define FACECUBE_H
 
-#include "ckociemba/facelet.h"
-#include "ckociemba/color.h"
-#include "ckociemba/corner.h"
-#include "ckociemba/edge.h"
+#include "facelet.h"
+#include "color.h"
+#include "corner.h"
+#include "edge.h"
 
 //Cube on the facelet level
 struct facecube {

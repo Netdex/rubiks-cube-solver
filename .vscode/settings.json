@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "cubiecube.h": "c",
-        "facecube.h": "c",
-        "color.h": "c",
-        "coordcube.h": "c",
-        "search.h": "c"
-    }
-}
