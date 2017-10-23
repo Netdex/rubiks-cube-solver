@@ -7,7 +7,7 @@
 #include "ckociemba/search.h"
 
 typedef struct {
-    bool has_solution;
+    int error_code;
     char* str;
     rubik_sequence_t seq;
 } rubik_solution_t;

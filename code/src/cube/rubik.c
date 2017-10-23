@@ -17,18 +17,15 @@ static rubik_color_t rubik_char_to_color(char c){
     }
 }
 
-static char rubik_to_face_char(rubik_color_t c){
-    switch(c){
-        case R_W:   return 'U';
-        case R_G:   return 'R';
-        case R_O:   return 'F';
-        case R_Y:   return 'D';
-        case R_B:   return 'L';
-        case R_R:   return 'B';
-        default:
-            LOG("invaid cube face color");
-            return ' ';
-    }
+static char rubik_to_face_char(rubik_cube_t *cube, rubik_color_t c){
+    if(c == cube->U.colors[1][1]) return 'U';
+    if(c == cube->R.colors[1][1]) return 'R';
+    if(c == cube->F.colors[1][1]) return 'F';
+    if(c == cube->D.colors[1][1]) return 'D';
+    if(c == cube->L.colors[1][1]) return 'L';
+    if(c == cube->B.colors[1][1]) return 'B';
+    LOG("invaid cube face color");
+    return ' ';
 }
 
 rubik_cube_t rubik_make_cube(rubik_color_t mat[6][3][3]){
@@ -117,7 +114,7 @@ char* rubik_convert_facelet(rubik_cube_t c){
         for(int y = 0; y < 3; y++){
             for(int x = 0; x < 3; x++){
                 str[f * 9 + y * 3 + x] 
-                    = rubik_to_face_char(c.faces[f].colors[y][x]);
+                    = rubik_to_face_char(&c, c.faces[f].colors[y][x]);
             }
         }
     }

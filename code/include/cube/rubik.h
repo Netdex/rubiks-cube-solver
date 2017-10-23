@@ -53,14 +53,13 @@ typedef struct {
 
 /*
  * Builds cube from 6 3x3 matrices of faces.
- * Order of faces is U, R, F, D, L, B.
+ * Original API order is U R F D L B
  */
 rubik_cube_t rubik_make_cube(rubik_color_t mat[6][3][3]);
 rubik_cube_t rubik_make_cube_from_char(char mat[6][3][3]);
 /*
  * Builds a sequence out of an algorithm string.
- * 
- * Operation array is VL, and must be freed through rubik_destroy_sequence
+ * Operation array is dynamic, and must be freed through rubik_destroy_sequence
  */
 rubik_sequence_t rubik_make_sequence(char *s);
 void rubik_destroy_sequence(rubik_sequence_t *t);
