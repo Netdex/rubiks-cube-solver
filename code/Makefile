@@ -23,9 +23,11 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BINFILE): $(OBJ)
+	mkdir -p $(BDIR)
 	$(CC) -o $(BDIR)/$@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
 clean:
 	find $(ODIR) -type f -name '*.o' -delete
+	rm -rf $(BDIR)/*
