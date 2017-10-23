@@ -1,21 +1,25 @@
+# OUTPUT BINARY NAME
 BINFILE = rbs1
 
+# TARGET DIRECTORIES
 SDIR = src
 ODIR = obj
 LDIR = lib
 BDIR = bin
 IDIR = include
 
+# COMPILER PARAMETERS
 CC = gcc
-CFLAGS = -I$(IDIR) -O2 -Werror -Wall
+CFLAGS = -I$(IDIR) -O2 -Werror -Wall --std=c99
 LIBS = -lm
 
-DEPS = $(wildcard $(IDIR)/*.h)
-SOURCES = $(notdir $(wildcard $(SDIR)/*.c))
-OBJ = $(addprefix $(ODIR)/, $(SOURCES:.c=.o))
-
+# SOURCE FILES
+DEPS := $(shell find $(IDIR) -name '*.h')
+SOURCES := $(shell find $(SDIR) -name '*.c')
+OBJ := $(addprefix $(ODIR)/, $(SOURCES:$(SDIR)/%.c=%.o))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
+	mkdir -p $(dir $@)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BINFILE): $(OBJ)
@@ -24,4 +28,4 @@ $(BINFILE): $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -rf $(ODIR)\*.o
+	find $(ODIR) -type f -name '*.o' -delete

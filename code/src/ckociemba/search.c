@@ -1,9 +1,9 @@
 #include <time.h>
 #include <stdlib.h>
-#include "search.h"
-#include "color.h"
-#include "facecube.h"
-#include "coordcube.h"
+#include "ckociemba/search.h"
+#include "ckociemba/color.h"
+#include "ckociemba/facecube.h"
+#include "ckociemba/coordcube.h"
 
 #define MIN(a, b) (((a)<(b))?(a):(b))
 #define MAX(a, b) (((a)>(b))?(a):(b))
