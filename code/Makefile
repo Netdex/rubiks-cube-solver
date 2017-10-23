@@ -10,7 +10,7 @@ IDIR = include
 
 # COMPILER PARAMETERS
 CC = gcc
-CFLAGS = -I$(IDIR) -O2 -Werror -Wall --std=c99
+CFLAGS = -I$(IDIR) -O2 -Wall --std=c99
 LIBS = -lm
 
 # SOURCE FILES
@@ -22,12 +22,15 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	mkdir -p $(dir $@)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(BINFILE): $(OBJ)
+$(BDIR)/$(BINFILE): $(OBJ)
 	mkdir -p $(BDIR)
-	$(CC) -o $(BDIR)/$@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-.PHONY: clean
+.PHONY: clean run
 
 clean:
 	find $(ODIR) -type f -name '*.o' -delete
 	rm -rf $(BDIR)/*
+
+run: $(BDIR)/$(BINFILE)
+	(cd $(BDIR); ./$(BINFILE))

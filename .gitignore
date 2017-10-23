@@ -1,5 +1,6 @@
-bin
-obj
+.vscode
+code/bin/*
+code/obj/*
 
 # Swap
 [._]*.s[a-v][a-z]
