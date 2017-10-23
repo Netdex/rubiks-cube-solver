@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "search.h"
+#include "ckociemba/search.h"
 
-int main(int argc, char **argv)
+/*int main(int argc, char **argv)
 {
     if (argc > 1) {
         char patternized[64];
@@ -28,4 +28,4 @@ int main(int argc, char **argv)
     } else {
         return 1;
     }
-}
+}*/
