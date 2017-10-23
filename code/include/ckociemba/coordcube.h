@@ -1,7 +1,7 @@
 #ifndef COORDCUBE_H
 #define COORDCUBE_H
 
-#include "cubiecube.h"
+#include "ckociemba/cubiecube.h"
 
 // Representation of the cube on the coordinate level
 
