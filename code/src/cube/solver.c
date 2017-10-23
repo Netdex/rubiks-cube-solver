@@ -15,12 +15,14 @@ rubik_solution_t rubik_solve(rubik_cube_t cube){
 		0,
 		"cache"
     );
+
+    free(facelets);
+    
     if(!sol){
         rubik_solution_t solt = {false, "no solution"};
         return solt;
     }
     else{
-        free(facelets);
         rubik_sequence_t seq = rubik_make_sequence(sol);
         rubik_solution_t solt = {true, sol, seq};
         return solt;
@@ -28,6 +30,6 @@ rubik_solution_t rubik_solve(rubik_cube_t cube){
 }
 
 void rubik_destroy_solution(rubik_solution_t *sol){
-    free(sol->solution_str);
-    rubik_destroy_sequence(&(sol->solution_seq));
+    free(sol->str);
+    rubik_destroy_sequence(&(sol->seq));
 }

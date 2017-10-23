@@ -38,7 +38,8 @@ int main(const int argc, const char *argv[]){
     };
     rubik_cube_t cube = rubik_make_cube_from_char(cube_mat);
     rubik_solution_t solution = rubik_solve(cube);
-    printf("%s\n", solution.solution_str);
+    printf("%s\n", solution.str);
+    printf("%s\n", rubik_sequence_to_string(&solution.seq));
 	return 0;
 
 }

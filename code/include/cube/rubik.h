@@ -65,6 +65,8 @@ rubik_cube_t rubik_make_cube_from_char(char mat[6][3][3]);
 rubik_sequence_t rubik_make_sequence(char *s);
 void rubik_destroy_sequence(rubik_sequence_t *t);
 
+char* rubik_sequence_to_string(rubik_sequence_t *t);
+
 /*
  * Convert cube into format compatible with solver API
  */
