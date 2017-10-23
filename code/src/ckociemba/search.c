@@ -55,7 +55,7 @@ char* solutionToString(search_t* search, int length, int depthPhase1)
 }
 
 
-char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, const char* cache_dir)
+char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, const char* cache_dir, int *e)
 {
     if (PRUNING_INITED == 0) {
         initPruning(cache_dir);
@@ -63,6 +63,8 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
 
     search_t* search = (search_t*) calloc(1, sizeof(search_t));
 
+    *e = 0;
+    
     int s;
     // +++++++++++++++++++++check for wrong input +++++++++++++++++++++++++++++
     int count[6] = {0};
@@ -92,6 +94,7 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
     for (int i = 0; i < 6; i++)
         if (count[i] != 9) {
             free(search);
+            *e = 1;
             return NULL;
         }
 
@@ -99,6 +102,7 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
     cubiecube_t* cc = toCubieCube(fc);
     if ((s = verify(cc)) != 0) {
         free(search);
+        *e = -s;
         return NULL;
     }
 
@@ -137,12 +141,15 @@ char* solution(char* facelets, int maxDepth, long timeOut, int useSeparator, con
                 do {// increment axis
                     if (++search->ax[n] > 5) {
 
-                        if (time(NULL) - tStart > timeOut)
+                        if (time(NULL) - tStart > timeOut){
+                            *e = 8;
                             return NULL;
-
+                        }
                         if (n == 0) {
-                            if (depthPhase1 >= maxDepth)
+                            if (depthPhase1 >= maxDepth){
+                                *e = 7;
                                 return NULL;
+                            }
                             else {
                                 depthPhase1++;
                                 search->ax[n] = 0;
