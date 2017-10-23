@@ -8,8 +8,8 @@
 
 typedef struct {
     bool has_solution;
-    char* solution_str;
-    rubik_sequence_t solution_seq;
+    char* str;
+    rubik_sequence_t seq;
 } rubik_solution_t;
 
 rubik_solution_t rubik_solve(rubik_cube_t cube);
