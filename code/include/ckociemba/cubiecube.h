@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "ckociemba/corner.h" 
-#include "ckociemba/edge.h"
+#include "corner.h" 
+#include "edge.h"
 
 //Cube on the cubie level
 struct cubiecube {
