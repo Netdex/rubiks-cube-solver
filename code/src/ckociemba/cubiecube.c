@@ -1,5 +1,5 @@
-#include "cubiecube.h"
-#include "facecube.h"
+#include "ckociemba/cubiecube.h"
+#include "ckociemba/facecube.h"
 
 cubiecube_t * get_moveCube()
 {
