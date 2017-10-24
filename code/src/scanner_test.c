@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "cube_scanner.h"
 
-int main(void) {
+int not_main(void) {
     char colours[6] = "WYGBRO";
     int face[3][3] = {0};
     scan_face("../rubik_face.jpg", face);
