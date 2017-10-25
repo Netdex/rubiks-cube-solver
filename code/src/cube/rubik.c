@@ -120,3 +120,21 @@ char* rubik_convert_facelet(rubik_cube_t c){
     }
     return str;
 }
+
+rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
+    switch(dir){
+        case R_CCW:         return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_DOUBLE_CW);
+        case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW); 
+        default:
+        {
+            rubik_face_t rot = {
+                {
+                    {face.colors[2][0],face.colors[1][0],face.colors[0][0]},
+                    {face.colors[2][1],face.colors[1][1],face.colors[0][1]},
+                    {face.colors[2][2],face.colors[1][2],face.colors[0][2]}
+                }
+            };
+            return rot;
+        }   
+    }
+}

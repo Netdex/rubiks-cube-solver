@@ -1,6 +1,8 @@
 #ifndef RUBIK_H
 #define RUBIK_H
 
+#include <stdbool.h>
+
 typedef enum {
    R_W = 0,
    R_G = 1,
@@ -43,6 +45,7 @@ typedef struct {
     rubik_side_t side;
     /* M': -1, M: 1, M2: 2 */
     rubik_dir_t direction;
+    bool is_rotation;
 } rubik_op_t;
 
 /* sequence of rubik's cube operations */
@@ -70,4 +73,10 @@ char* rubik_sequence_to_string(rubik_sequence_t *t);
  * Convert cube into format compatible with solver API
  */
 char* rubik_convert_facelet(rubik_cube_t c);
+
+/*
+ * Rotate face according to operation
+ */
+rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
+
 #endif
