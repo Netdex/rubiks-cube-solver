@@ -1,6 +1,50 @@
 #include "cube_scanner.h"
+#include <math.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "../include/stb_image.h"
+
+double max(double a, double b) {
+    if (a > b) return a;
+    return b;
+}
+
+double min(double a, double b) {
+    if (a < b) return a;
+    return b;
+}
+
+hsv_colour rgb_to_hsv(int r, int g, int b) {
+    double rp = r / 255.0;
+    double gp = g / 255.0;
+    double bp = b / 255.0;
+
+    double Cmax = max(rp, max(gp, bp));
+    double Cmin = min(rp, min(gp, bp));
+
+    double delta = Cmax - Cmin;
+
+    double hue = 0;
+    
+    if (Cmax == rp) {
+        double term = (gp - bp) / delta;
+        while (term >= 6.0) term -= 6.0;
+        hue = 60 * term;
+    } else if (Cmax = gp) {
+        hue = 60 * (((bp - rp) / delta) + 2);
+    } else {
+        hue = 60 * (((rp - gp) / delta) + 4);
+    }
+
+    double sat = 0;
+    if (Cmax != 0) {
+        sat = delta / Cmax;
+    }
+    
+    double val = Cmax;
+
+    hsv_colour ret = {hue, sat, val};
+    return ret;
+}
 
 int average_region(uint8_t* image, int image_w, int image_h, int image_bpp, int centre_x, int centre_y, int width, int height) {
     long long r_sum = 0;
@@ -24,40 +68,28 @@ int average_region(uint8_t* image, int image_w, int image_h, int image_bpp, int 
     return ((int) r_sum << 16) | ((int) g_sum << 8) | (int) b_sum;
 }
 
-// Effectively determines how "far apart" two colours are,
-// using the sum of squared differences of each component
-int compare_colour(int colour1, int colour2) {
-    int r1 = (colour1 >> 16) & 0xFF;
-    int g1 = (colour1 >> 8) & 0xFF;
-    int b1 = colour1 & 0xFF;
-
-    int r2 = (colour2 >> 16) & 0xFF;
-    int g2 = (colour2 >> 8) & 0xFF;
-    int b2 = colour2 & 0xFF;
-
-    return (r1 - r2) * (r1 - r2) +
-           (g1 - g2) * (g1 - g2) +
-           (b1 - b2) * (b1 - b2);
+int compare_colour(hsv_colour colour1, hsv_colour colour2) {
+    return min(fabs(colour1.hue - colour2.hue), fabs(colour1.hue + 360 - colour2.hue));
 }
 
-int determine_colour(int colour) {
+int determine_colour(hsv_colour colour) {
+    if (colour.sat <= 0.15 && colour.val >= 0.85) return 0;
     int scores[6] = {0};
-    scores[0] = compare_colour(colour, WHITE);
-    scores[1] = compare_colour(colour, YELLOW);
-    scores[2] = compare_colour(colour, GREEN);
-    scores[3] = compare_colour(colour, BLUE);
-    scores[4] = compare_colour(colour, RED);
-    scores[5] = compare_colour(colour, ORANGE);
+    scores[1] = compare_colour(YELLOW, colour);
+    scores[2] = compare_colour(GREEN, colour);
+    scores[3] = compare_colour(BLUE, colour);
+    scores[4] = compare_colour(RED, colour);
+    scores[5] = compare_colour(ORANGE, colour);
+    
+    int minScore = scores[1];
+    int minI = 1;
 
-    int minScore = scores[0];
-    int minI = 0;
-    for (int i = 1; i < 6; i++) {
+    for (int i = 2; i < 6; i++) {
         if (scores[i] < minScore) {
             minScore = scores[i];
             minI = i;
         }
     }
-
     return minI;
 }
 
@@ -81,15 +113,15 @@ void scan_face(char* imageLoc, int output[3][3]) {
     int c_2_1 = average_region(rgb_image, width, height, bpp, X_1_CENTRE, Y_2_CENTRE, BOX_WIDTH, BOX_HEIGHT);
     int c_2_2 = average_region(rgb_image, width, height, bpp, X_2_CENTRE, Y_2_CENTRE, BOX_WIDTH, BOX_HEIGHT);
 
-    output[0][0] = determine_colour(c_0_0);
-    output[0][1] = determine_colour(c_0_1);
-    output[0][2] = determine_colour(c_0_2);
-
-    output[1][0] = determine_colour(c_1_0);
-    output[1][1] = determine_colour(c_1_1);
-    output[1][2] = determine_colour(c_1_2);
-
-    output[2][0] = determine_colour(c_2_0);
-    output[2][1] = determine_colour(c_2_1);
-    output[2][2] = determine_colour(c_2_2);
+    //output[0][0] = determine_colour(c_0_0);
+    //output[0][1] = determine_colour(c_0_1);
+    //output[0][2] = determine_colour(c_0_2);
+//
+    //output[1][0] = determine_colour(c_1_0);
+    //output[1][1] = determine_colour(c_1_1);
+    //output[1][2] = determine_colour(c_1_2);
+//
+    //output[2][0] = determine_colour(c_2_0);
+    //output[2][1] = determine_colour(c_2_1);
+    //output[2][2] = determine_colour(c_2_2);
 }
