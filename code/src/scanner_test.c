@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "cube_scanner.h"
 
-int not_main(void) {
+int main(void) {
     char colours[6] = "WYGBRO";
     int face[3][3] = {0};
     for (int i = 0; i < 20; i++) {
