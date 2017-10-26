@@ -12,7 +12,7 @@ static rubik_color_t rubik_char_to_color(char c){
         case 'W':   return R_W;
         case 'Y':   return R_Y;
         default:
-            LOG("invalid cube face color");  
+            LOG("invalid cube face color");
             return R_W;
     }
 }
@@ -77,6 +77,7 @@ rubik_sequence_t rubik_make_sequence(char *s){
                 i += 3;
             break;
         }
+        cop.rotation = R_NOROT;
         ops[opc++] = cop;
     }
 
@@ -99,11 +100,20 @@ char* rubik_sequence_to_string(rubik_sequence_t *t){
             case R_DOWN:    str[p++] = 'D'; break;
             case R_LEFT:    str[p++] = 'L'; break;
             case R_BACK:    str[p++] = 'B'; break;
+            case R_NOSIDE:  str[p++] = '_'; break;
         }
         switch(t->operations[i].direction){
             case R_CW:          str[p++] = ' ';     break;
             case R_CCW:         str[p++] = '\'';    str[p++] = ' ';   break;
             case R_DOUBLE_CW:   str[p++] = '2';     str[p++] = ' ';   break;
+            case R_NODIR:       str[p++] = '_';      str[p++] = ' ';   break;
+        }
+        switch(t->operations[i].rotation){
+            case R_FONB: str[p++] = 'f';  break;
+            case R_BONB: str[p++] = 'b';  break;
+            case R_RONB: str[p++] = 'r';  break;
+            case R_LONB: str[p++] = 'l';  break;
+            case R_NOROT: break;
         }
     }
     return str;
@@ -113,7 +123,7 @@ char* rubik_convert_facelet(rubik_cube_t c){
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
             for(int x = 0; x < 3; x++){
-                str[f * 9 + y * 3 + x] 
+                str[f * 9 + y * 3 + x]
                     = rubik_to_face_char(&c, c.faces[f].colors[y][x]);
             }
         }
@@ -124,7 +134,7 @@ char* rubik_convert_facelet(rubik_cube_t c){
 rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     switch(dir){
         case R_CCW:         return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_DOUBLE_CW);
-        case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW); 
+        case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW);
         default:
         {
             rubik_face_t rot = {
@@ -135,6 +145,40 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
                 }
             };
             return rot;
-        }   
+        }
     }
+}
+
+// Parses sequence to create a solver friendly solution that takes away all top and bottom turns buy turning the cube to a solvable state
+rubik_sequence_t remove_up_down(rubik_sequence_t *s){
+  int l = s->length + 20;
+  int opc = 0;
+  rubik_op_t *ops = calloc(l, sizeof(rubik_op_t));
+  for(int i = 0; i < s->length; i++){
+      rubik_op_t cop = {0};
+      if (s->operations[i].side == R_UP || s->operations[i].side == R_DOWN){
+        for(int j = i; j < s->length; j++){
+          switch(s->operations[j].side){
+            case R_UP:    s->operations[i].side = R_FRONT;  break;
+            case R_RIGHT: s->operations[i].side = R_RIGHT;  break;
+            case R_FRONT: s->operations[i].side = R_DOWN;   break;
+            case R_DOWN:  s->operations[i].side = R_BACK;   break;
+            case R_LEFT:  s->operations[i].side = R_LEFT;   break;
+            case R_BACK:  s->operations[i].side = R_UP;     break;
+            case R_NOSIDE: break;
+            }
+          }
+          // Adds a turning mechanism
+          cop.side = R_NOSIDE;
+          cop.direction = R_NODIR;
+          cop.rotation = R_FONB;
+          ops[opc++] = cop;
+      }
+      // Add next step
+      cop.side = s->operations[i].side;
+      cop.direction = s->operations[i].direction;
+      ops[opc++] = cop;
+  }
+  rubik_sequence_t seq = {l, ops};
+  return seq;
 }
