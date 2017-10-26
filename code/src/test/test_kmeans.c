@@ -40,9 +40,9 @@ void test_kmeans(){
                 dataset[i].b
         });
         gfx_rect(image, 
-            (int)(dataset[i].r * 512)-1, 
-            (int)(dataset[i].g * 512)-1, 
-            3,3, 
+            (int)(dataset[i].r * 512) - 1, 
+            (int)(dataset[i].g * 512) - 1, 
+            3, 3, 
             class_col[labels[i]]
         );
     }
