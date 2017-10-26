@@ -17,6 +17,8 @@ bool cluster_rgb_continue(int k, int its, int iter, float e, rgb_t old_centroids
 }
 
 void cluster_rgb_kmeans(int k, float e, int iter, rgb_t colors[], int n, rgb_t *centroids){
+    srand((unsigned int)time(NULL));
+    
     rgb_t *old_centroids = (rgb_t*)calloc(k, sizeof(rgb_t));
     
     // random init centroids

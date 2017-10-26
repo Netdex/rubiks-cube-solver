@@ -9,6 +9,7 @@
  * clustering with k-memes
  * 
  * Face order is U, R, F, D, L, B
+ * Face orientation is defined in "ckociemba/facelets.h"
  */
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3]);
 
