@@ -3,7 +3,7 @@
 #include "cv/graphics.h"
 
 image_t gfx_create_image(int width, int height){
-    uint8_t *buf = (uint8_t*) cmalloc(1, sizeof(rgb_t) * width * height);
+    uint8_t *buf = (uint8_t*) calloc(1, sizeof(rgb_t) * width * height);
     image_t image = { width, height, buf };
     return image;
 }
