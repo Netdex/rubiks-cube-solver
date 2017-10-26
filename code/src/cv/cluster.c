@@ -25,10 +25,6 @@ void cluster_rgb_kmeans(int k, float e, int iter, rgb_t colors[], int n, rgb_t *
         ct->r = randf();
         ct->g = randf();
         ct->b = randf();
-
-        old_centroids[i].r = 0.f;
-        old_centroids[i].g = 0.f;
-        old_centroids[i].b = 0.f;
     }
 
     int its = 0;
