@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cube_scanner.h"
+#include "bbb_gpio.h"
 
 int main(void) {
     char colours[6] = "WYGBRO";
     int face[3][3] = {0};
+
     for (int i = 0; i < 20; i++) {
         system("fswebcam --device /dev/video1 -q -r 640x360 --no-banner -S 30 temp.jpg");
         scan_face("temp.jpg", face);
