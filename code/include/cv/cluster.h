@@ -13,7 +13,7 @@
  * @param centroids     current iteration's centroids
  * @return              whether we should continue k-means
  */
-static bool cluster_rgb_continue(int k, int its, int iter, float e, rgb_t old_centroids[], rgb_t centroids[]);
+bool cluster_rgb_continue(int k, int its, int iter, float e, rgb_t old_centroids[], rgb_t centroids[]);
 
 /*
  * cluster colors by k-means, into k clusters

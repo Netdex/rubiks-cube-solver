@@ -83,4 +83,10 @@ char* rubik_sequence_to_string(rubik_sequence_t *t);
  * Convert cube into format compatible with solver API
  */
 char* rubik_convert_facelet(rubik_cube_t c);
+
+/*
+ * Rotates an individual face by some direction, 
+ * for rotating faces read from camera input
+ */
+rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
 #endif
