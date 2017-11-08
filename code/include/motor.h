@@ -2,9 +2,9 @@
 #define MOTOR_H
 
 #include "bbb_gpio.h"
-#include <time.h>
+#include "util/nsleep.h" 
 
-static const struct timespec DELAY = {0, 750000L};
+#define DELAY 750000
 
 typedef struct {
     int pin1;

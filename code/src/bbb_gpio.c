@@ -34,7 +34,7 @@ int read_val(int n) {
 
 void write_val(int n, int val) {
     char cmd[60];
-    sprintf(cmd, "echo %d > /sys/class/gpio%d/direction", val, n);
+    sprintf(cmd, "echo %d > /sys/class/gpio/gpio%d/value", val, n);
     int code = system(cmd);
     if (code < 0) {
         printf("System call %s returned code %d when writing value to pin %d\n", cmd, code, n);
