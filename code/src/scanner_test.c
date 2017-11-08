@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include "cube_scanner.h"
 #include "bbb_gpio.h"
+#include "lcd.h"
 
 void test_kmeans();
 
 int main(void) {
-    srand((unsigned int)time(NULL));
+    //srand((unsigned int)time(NULL));
 
-    test_kmeans();
+    //test_kmeans();
     // char colours[6] = "WYGBRO";
     // int face[3][3] = {0};
 
@@ -22,5 +23,13 @@ int main(void) {
     //     printf("%c %c %c\n", colours[face[1][0]], colours[face[1][1]], colours[face[1][2]]);
     //     printf("%c %c %c\n", colours[face[2][0]], colours[face[2][1]], colours[face[2][2]]);
     // }
+
+    printf("Creating LCD struct\n");
+    lcd l = {66, 67, 69, 68, 45, 44};
+    printf("Created LCD struct\n");
+    lcd_init(l);
+
+    write_string(l, "LRBUF'");
+
     return 0;
 }

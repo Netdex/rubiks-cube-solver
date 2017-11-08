@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "lcd.h"
 
 void enable(lcd l) {
@@ -44,6 +45,20 @@ void write_string(lcd l, char *str) {
 }
 
 void lcd_init(lcd l) {
+    set_dir(l.rs_pin, BBB_OUT);
+    set_dir(l.e_pin, BBB_OUT);
+    set_dir(l.d4_pin, BBB_OUT);
+    set_dir(l.d5_pin, BBB_OUT);
+    set_dir(l.d6_pin, BBB_OUT);
+    set_dir(l.d7_pin, BBB_OUT);
+
+    write_val(l.rs_pin, BBB_LO);
+    write_val(l.e_pin, BBB_LO);
+    write_val(l.d4_pin, BBB_LO);
+    write_val(l.d5_pin, BBB_LO);
+    write_val(l.d6_pin, BBB_LO);
+    write_val(l.d7_pin, BBB_LO);
+
     send_command(l, 0x33);
     send_command(l, 0x32);
     send_command(l, 0x28);
