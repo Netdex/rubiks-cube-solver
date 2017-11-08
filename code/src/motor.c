@@ -80,7 +80,7 @@ void q_turn(motor m, int dir) {
         } else {
             step(i, m);
         }
-        nanosleep(&DELAY, NULL);
+        nsleep(DELAY);
     }
 }
 
@@ -96,14 +96,14 @@ void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
         } else {
             step(i, m2);
         }
-        nanosleep(&DELAY, NULL);
+        nsleep(DELAY);
     }
 }
 
 void h_turn(motor m) {
     for (int i = 0; i < 2048; i++) {
         step(i, m);
-        nanosleep(&DELAY, NULL);
+        nsleep(DELAY);
     }
 }
 
@@ -119,6 +119,6 @@ void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
         } else {
             step(i, m2);
         }
-        nanosleep(&DELAY, NULL);
+        nsleep(DELAY);
     }
 }
