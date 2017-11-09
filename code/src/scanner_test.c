@@ -5,6 +5,7 @@
 #include "cube_scanner.h"
 #include "bbb_gpio.h"
 #include "lcd.h"
+#include "motor.h"
 
 void test_kmeans();
 
@@ -24,12 +25,27 @@ int main(void) {
     //     printf("%c %c %c\n", colours[face[2][0]], colours[face[2][1]], colours[face[2][2]]);
     // }
 
-    printf("Creating LCD struct\n");
-    lcd l = {66, 67, 69, 68, 45, 44};
-    printf("Created LCD struct\n");
+    /*lcd l = {66, 67, 69, 68, 45, 44};
     lcd_init(l);
+    
+    write_string(l, "F");
+    nsleep(2000000000);
+    write_string(l, "R'");
+    nsleep(2000000000);
+    write_string(l, "U2");
+    nsleep(2000000000);
+    write_string(l, "B'");
+    nsleep(2000000000);
+    write_string(l, "F");
+    nsleep(2000000000);
+    write_string(l, "L");
+    nsleep(2000000000);*/
 
-    write_string(l, "LRBUF'");
-
+    motor m = {23, 26, 47, 46};
+    motor_init(m);
+    for(int i = 0; i < 200; i++) {
+        step(i, m);
+    }
+    
     return 0;
 }
