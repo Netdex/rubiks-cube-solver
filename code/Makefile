@@ -10,7 +10,7 @@ IDIR 	:= include
 
 # COMPILER PARAMETERS
 CC 		:= gcc
-CFLAGS 	:= -I$(IDIR) -O2 -D _POSIX_C_SOURCE=200809L -Wall --std=c99 # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
+CFLAGS 	:= -I$(IDIR) -O2 -lBBBio -D _POSIX_C_SOURCE=200809L -Wall --std=c99 # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
 LIBS 	:= -lm
 PCH 	:= $(IDIR)/stdafx.h
 

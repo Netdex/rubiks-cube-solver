@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <BBBiolib.h>
 #include "cube_scanner.h"
-#include "bbb_gpio.h"
 #include "lcd.h"
 #include "motor.h"
 
@@ -41,11 +41,16 @@ int main(void) {
     write_string(l, "L");
     nsleep(2000000000);*/
 
-    motor m = {23, 26, 47, 46};
+    iolib_init();
+
+    motor m = {13, 14, 15, 16};
     motor_init(m);
     for(int i = 0; i < 200; i++) {
         step(i, m);
+        nsleep(750000);
     }
+
+    iolib_free();
     
     return 0;
 }
