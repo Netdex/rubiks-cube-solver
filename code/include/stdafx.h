@@ -12,6 +12,7 @@
 #include <float.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 
 #include "util/log.h"
 

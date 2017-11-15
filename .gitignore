@@ -1,4 +1,9 @@
+# IDE garbage
 .vscode
+.idea
+cmake-build-debug
+CMakeLists.txt
+
 code/bin/*
 code/obj/*
 
