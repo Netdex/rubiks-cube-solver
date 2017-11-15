@@ -77,7 +77,7 @@ rubik_sequence_t rubik_make_sequence(char *s){
                 i += 3;
             break;
         }
-        cop.rotation = R_NOROT;
+        cop.rotation = R_NOSIDE;
         ops[opc++] = cop;
     }
 
@@ -109,11 +109,11 @@ char* rubik_sequence_to_string(rubik_sequence_t *t){
             case R_NODIR:       str[p++] = '_';      str[p++] = ' ';   break;
         }
         switch(t->operations[i].rotation){
-            case R_FONB: str[p++] = 'f';  break;
-            case R_BONB: str[p++] = 'b';  break;
-            case R_RONB: str[p++] = 'r';  break;
-            case R_LONB: str[p++] = 'l';  break;
-            case R_NOROT: break;
+            case R_FRONT: str[p++] = 'f';  break;
+            case R_BACK: str[p++] = 'b';  break;
+            case R_RIGHT: str[p++] = 'r';  break;
+            case R_LEFT: str[p++] = 'l';  break;
+            default: break;
         }
     }
     return str;
@@ -149,8 +149,7 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     }
 }
 
-// Parses sequence to create a solver friendly solution that takes away all top and bottom turns buy turning the cube to a solvable state
-rubik_sequence_t remove_up_down(rubik_sequence_t *s){
+rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
   int l = s->length + 20;
   int opc = 0;
   rubik_op_t *ops = calloc(l, sizeof(rubik_op_t));
@@ -171,7 +170,7 @@ rubik_sequence_t remove_up_down(rubik_sequence_t *s){
           // Adds a turning mechanism
           cop.side = R_NOSIDE;
           cop.direction = R_NODIR;
-          cop.rotation = R_FONB;
+          cop.rotation = R_FRONT;
           ops[opc++] = cop;
       }
       // Add next step

@@ -40,22 +40,14 @@ typedef enum {
     R_NODIR = 3
 } rubik_dir_t;
 
-// Rotate
-typedef enum {
-    R_FONB = 0,
-    R_BONB = 1,
-    R_RONB = 2,
-    R_LONB = 3,
-    R_NOROT = 4
-} rubik_rt_t;
-
 /* elementary rubik's cube operation */
 typedef struct {
     rubik_side_t side;
     /* M': -1, M: 1, M2: 2 */
     rubik_dir_t direction;
 
-    rubik_rt_t rotation;
+    /* the side that will become the bottom after the rotation (must be R, L, B, or F)*/
+    rubik_side_t rotation;
 } rubik_op_t;
 
 /* sequence of rubik's cube operations */
@@ -89,4 +81,9 @@ char* rubik_convert_facelet(rubik_cube_t c);
  * for rotating faces read from camera input
  */
 rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
+
+/*
+ * Parses sequence to create a solver friendly solution that takes away all top and bottom turns buy turning the cube to a solvable state
+ */
+rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s);
 #endif
