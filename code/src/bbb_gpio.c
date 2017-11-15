@@ -22,7 +22,7 @@ int read_val(int n) {
     char file[60];
     sprintf(file, "/sys/class/gpio/gpio%d/value", n);
     FILE *fp;
-    fp = fopen(file, "l");
+    fp = fopen(file, "r");
     int value = 0;
     int code = fscanf(fp, "%d", &value);
     if (code < 0) {

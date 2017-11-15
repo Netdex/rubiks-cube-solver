@@ -2,7 +2,7 @@
 #define LCD_H
 
 #include "util/nsleep.h"
-#include "bbb_gpio.h"
+#include <BBBiolib.h>
 
 typedef struct {
     int rs_pin;
