@@ -1,14 +1,14 @@
 #include "motor.h"
 
 void motor_init(motor m) {
-    set_dir(m.pin1, BBB_OUT);
-    set_dir(m.pin2, BBB_OUT);
-    set_dir(m.pin3, BBB_OUT);
-    set_dir(m.pin4, BBB_OUT);
-    write_val(m.pin1, BBB_LO);
-    write_val(m.pin2, BBB_LO);
-    write_val(m.pin3, BBB_LO);
-    write_val(m.pin4, BBB_LO);
+    iolib_setdir(8, m.pin1, BBBIO_DIR_OUT);
+    iolib_setdir(8, m.pin2, BBBIO_DIR_OUT);
+    iolib_setdir(8, m.pin3, BBBIO_DIR_OUT);
+    iolib_setdir(8, m.pin4, BBBIO_DIR_OUT);
+    pin_low(8, m.pin1);
+    pin_low(8, m.pin2);
+    pin_low(8, m.pin3);
+    pin_low(8, m.pin4);
 }
 
 void step(int step, motor m) {
@@ -17,58 +17,58 @@ void step(int step, motor m) {
     step %= 8;
     switch (step) {
     case 0:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_HI);
+        pin_low(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_high(8, m.pin4);
 	break;
     case 1:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_HI);
-        write_val(m.pin4, BBB_HI);
+        pin_low(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_high(8, m.pin3);
+        pin_high(8, m.pin4);
 	break;
     case 2:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_HI);
-        write_val(m.pin4, BBB_LO);
+        pin_low(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_high(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     case 3:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_HI);
-        write_val(m.pin3, BBB_HI);
-        write_val(m.pin4, BBB_LO);
+        pin_low(8, m.pin1);
+        pin_high(8, m.pin2);
+        pin_high(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     case 4:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_HI);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_LO);
+        pin_low(8, m.pin1);
+        pin_high(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     case 5:
-        write_val(m.pin1, BBB_HI);
-        write_val(m.pin2, BBB_HI);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_LO);
+        pin_high(8, m.pin1);
+        pin_high(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     case 6:
-        write_val(m.pin1, BBB_HI);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_LO);
+        pin_high(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     case 7:
-        write_val(m.pin1, BBB_HI);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_HI);
+        pin_high(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_high(8, m.pin4);
 	break;
     default:
-        write_val(m.pin1, BBB_LO);
-        write_val(m.pin2, BBB_LO);
-        write_val(m.pin3, BBB_LO);
-        write_val(m.pin4, BBB_LO);
+        pin_low(8, m.pin1);
+        pin_low(8, m.pin2);
+        pin_low(8, m.pin3);
+        pin_low(8, m.pin4);
 	break;
     }
 }
