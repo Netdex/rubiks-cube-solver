@@ -6,27 +6,27 @@ perform L->D rotation
 
 take image of top face (R)
 create rgb matrix of face
+rotate mat CW
+perform L->D rotation
+
+take image of top face (B)
+create rgb matrix of face
+rotate mat 2CW
+perform L->D rotation
+
+take image of top face (L)
+create rgb matrix of face
 rotate mat CCW
-perform B->D rotation
+perform F->D rotation
 
 take image of top face (F)
 create rgb matrix of face
 rotate mat CCW
-perform L->D rotation
-
-take image of top face (D)
-create rgb matrix of face
-rotate mat CCW
-perform B->D rotation
-
-take image of top face (L)
-create rgb matrix of face
-rotate mat 2CW
-perform L->D rotation
+perform F->D rotation x2
 
 take image of top face (B)
-rotate mat 2CW
 create rgb matrix of face
+rotate mat CCW
 
 build rgb matrix
 cluster and label rgb matrix
