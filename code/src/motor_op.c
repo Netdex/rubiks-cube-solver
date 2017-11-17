@@ -11,8 +11,7 @@ motor motors[] = {
     {0,0,0,0},     // F/B release
 };
 
-void motor_rotate_face(rubik_side_t face){
-    assert(face != R_UP && face != R_DOWN);
+void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
 
     switch(face){
         case R_FRONT:
@@ -26,6 +25,6 @@ void motor_rotate_face(rubik_side_t face){
     }
 }
 
-void motor_rotate_cube(rubik_side_t bottom){
+void motor_op_rotate_cube(rubik_side_t bottom){
     assert(bottom != R_UP && bottom != R_DOWN);
 }
