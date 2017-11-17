@@ -39,11 +39,11 @@ rubik_cube_t scan_cube(){
 int main(void){
     rubik_cube_t cube = scan_cube();
     rubik_solution_t solution = rubik_solve(cube);
-    
-    // transform sequence into a full rotation sequence w/o up and down
-    
     assert(solution.error_code == 0);
     printf("%s\n", solution.str);
+
+    // TODO: transform sequence into a full rotation sequence w/o up and down
+    
     for(int i = 0; i < solution.seq.length; i++){
         motor_op_rotate_face(
             solution.seq.operations[i].side, 
