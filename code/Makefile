@@ -10,8 +10,9 @@ IDIR 	:= include
 
 # COMPILER PARAMETERS
 CC 		:= gcc
-CFLAGS 	:= -I$(IDIR) -O2 -lBBBio -D _POSIX_C_SOURCE=200809L -Wall --std=c99 # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
-LIBS 	:= -lm
+DEF		:= -D_POSIX_C_SOURCE=200809L -DNO_GPIO # DISABLES BBBIOLIB
+CFLAGS 	:= -I$(IDIR) -O2  -Wall --std=c99 $(DEF) # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
+LIBS 	:= -lm #-lBBBio
 PCH 	:= $(IDIR)/stdafx.h
 
 # SOURCE FILES

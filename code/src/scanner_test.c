@@ -1,4 +1,4 @@
-#include "stdafx.h"
+/*#include "stdafx.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +9,7 @@
 
 void test_kmeans();
 
-int main(void) {
+int not_main(void) {
     //srand((unsigned int)time(NULL));
 
     //test_kmeans();
@@ -25,7 +25,7 @@ int main(void) {
     //     printf("%c %c %c\n", colours[face[2][0]], colours[face[2][1]], colours[face[2][2]]);
     // }
 
-    /*lcd l = {66, 67, 69, 68, 45, 44};
+    lcd l = {66, 67, 69, 68, 45, 44};
     lcd_init(l);
     
     write_string(l, "F");
@@ -39,7 +39,7 @@ int main(void) {
     write_string(l, "F");
     nsleep(2000000000);
     write_string(l, "L");
-    nsleep(2000000000);*/
+    nsleep(2000000000);
 
     iolib_init();
 
@@ -54,3 +54,4 @@ int main(void) {
     
     return 0;
 }
+*/

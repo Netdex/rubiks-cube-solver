@@ -1,9 +1,16 @@
 #include "stdafx.h"
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "cv/cube_classify.h"
 #include "cv/cluster.h"
+
+uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
+    system("fswebcam --device /dev/video1 -q -r 640x360 --no-banner -S 30 temp.jpg");
+    uint8_t* rgb_image = stbi_load("temp.jpg", width, height, bpp, 3);
+    return rgb_image;
+}
 
 void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, int x1, int y1, int x2, int y2, rgb_t col_mat[3][3])
 {

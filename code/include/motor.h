@@ -1,7 +1,9 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
+#ifndef NO_GPIO
 #include <BBBiolib.h>
+#endif
 #include "util/nsleep.h" 
 
 #define DELAY 750000

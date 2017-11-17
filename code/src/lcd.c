@@ -1,4 +1,5 @@
 #include <stdio.h>
+#ifndef NO_GPIO
 #include "lcd.h"
 
 void set_pin(int pin, int val) {
@@ -74,3 +75,4 @@ void lcd_init(lcd l) {
     send_command(l, 0x01);
     send_command(l, 0x80);
 }
+#endif
