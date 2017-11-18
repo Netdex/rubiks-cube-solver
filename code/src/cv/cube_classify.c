@@ -46,6 +46,34 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
 
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
 {
+    rubik_color_t cube_col[6][3][3];
+    for(int f = 0; f < 6; f++){
+        for(int y = 0; y < 3; y++){
+            for(int x = 0; x < 3; x++){
+                if(x == 1 && y == 1){
+                    cube_col[f][y][x] = f;
+                } else {
+                    float minDist = FLT_MAX;
+                    int minFace = 0;
+                    // find center facelet with minimum weighted rgb dist
+                    for(int mf = 0; mf < 6; mf++){
+                        float dist = color_rgb_dist_sq(colors[f][y][x], colors[mf][1][1]);
+                        if(dist < minDist){
+                            minDist = dist;
+                            minFace = mf;
+                        }
+                    }
+                    cube_col[f][y][x] = minFace;
+                }
+            }
+        }
+    }
+    rubik_cube_t cube = rubik_make_cube(cube_col);
+    return cube;
+}
+
+rubik_cube_t cube_classify_cluster_from_colors(rgb_t colors[6][3][3])
+{
     rgb_t *dataset = (rgb_t *)colors;
 
     LOG("k-means clustering...");
