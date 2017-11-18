@@ -38,6 +38,8 @@ void cluster_rgb_kmeans(int k, float e, int iter, rgb_t colors[], int n, rgb_t *
         cluster_rgb_centroids(k, colors, n, labels, centroids);
     } while(cluster_rgb_continue(k, its, iter, e, old_centroids, centroids));
 
+    LOG("clustering completed after %d iters", its);
+    
     free(old_centroids);
     free(labels);
 }

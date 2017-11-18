@@ -9,6 +9,6 @@ void logm(const char* file, const char* func, int line, const char* fmt, ...)
 	va_list args;
 	va_start(args, fmt);
 	vsprintf(buf, fmt, args);
-	printf("%s:%d@%s()| %s\n", file, line, func, buf);
+	printf("%s:%d@%s(): %s\n", file, line, func, buf);
 	va_end(args);
 }

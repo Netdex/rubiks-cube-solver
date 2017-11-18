@@ -2,12 +2,12 @@
 #define RUBIK_H
 
 typedef enum {
-   R_W = 0,
-   R_G = 1,
-   R_O = 2,
-   R_Y = 3,
-   R_B = 4,
-   R_R = 5
+   R_U = 0,
+   R_R = 1,
+   R_F = 2,
+   R_D = 3,
+   R_L = 4,
+   R_B = 5
 } rubik_color_t;
 
 typedef struct {
@@ -24,20 +24,20 @@ typedef struct {
 } rubik_cube_t;
 
 typedef enum {
+    R_NOSIDE = -1,
     R_UP    = 0,
     R_RIGHT = 1,
     R_FRONT = 2,
     R_DOWN  = 3,
     R_LEFT  = 4,
     R_BACK  = 5,
-    R_NOSIDE = 6
 } rubik_side_t;
 
 typedef enum {
-    R_CW = 1,
-    R_CCW = -1,
+    R_NODIR = -1,
+    R_CW = 0,
+    R_CCW = 1,
     R_DOUBLE_CW = 2,
-    R_NODIR = 3
 } rubik_dir_t;
 
 /* elementary rubik's cube operation */
@@ -46,7 +46,7 @@ typedef struct {
     /* M': -1, M: 1, M2: 2 */
     rubik_dir_t direction;
 
-    /* the side that will become the bottom after the rotation (must be R, L, B, or F)*/
+    /* the side that will become the bottom after the rotation */
     rubik_side_t rotation;
 } rubik_op_t;
 
@@ -86,4 +86,9 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
  * Parses sequence to create a solver friendly solution that takes away all top and bottom turns buy turning the cube to a solvable state
  */
 rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s);
+
+/*
+ * Mutate a sequence so that it performs the same operations but in a different rotation
+ */
+void rubik_sequence_rotate(rubik_sequence_t *s, int idx, int len, rubik_side_t bottom);
 #endif
