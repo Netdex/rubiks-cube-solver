@@ -76,25 +76,34 @@ int main(void){
     }
     
     rubik_solution_t solution = rubik_solve(cube);
-    LOG("generated sequence: %s\n", solution.str);
+    LOG("generated sequence: %s", solution.str);
     assert(solution.error_code == 0);
     
     LOG("optimizing sequence");
-    rubik_sequence_t trunc = rubik_cube_remove_up_down(&solution.seq);
     // TODO: transform sequence into a full rotation sequence w/o up and down
+    // The solution rubik_cube_remove_up_down needs to be fixed!
+    rubik_sequence_t trunc = rubik_cube_remove_up_down(&solution.seq);
+    char *str = rubik_sequence_to_string(&trunc);
+    LOG("optimized sequence: %s\n", str);
+    free(str);
     
     LOG("running sequence");
     for(int i = 0; i < trunc.length; i++){
+        motor_op_rotate_cube(trunc.operations[i].rotation);
+        if(trunc.operations[i].rotation != R_NOSIDE){
+            printf("%c", 
+                RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
+        }
         motor_op_rotate_face(
             trunc.operations[i].side, 
             trunc.operations[i].direction);
-        if(trunc.operations[i].side != R_NOSIDE && trunc.operations[i].direction != R_NODIR){
-            printf("%d/%d ", trunc.operations[i].side, trunc.operations[i].direction);
+        if(trunc.operations[i].side != R_NOSIDE 
+            && trunc.operations[i].direction != R_NODIR){
+            printf("%c%c", 
+                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
+                RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
         }
-        motor_op_rotate_cube(trunc.operations[i].rotation);
-        if(trunc.operations[i].rotation != R_NOSIDE){
-            printf("%d/%d ", trunc.operations[i].side, trunc.operations[i].direction);
-        }
+        printf(" ");
     }
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
