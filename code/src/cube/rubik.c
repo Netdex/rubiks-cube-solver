@@ -5,15 +5,15 @@
 
 static rubik_color_t rubik_char_to_color(char c){
     switch(c){
-        case 'R':   return R_R;
-        case 'O':   return R_O;
-        case 'B':   return R_B;
-        case 'G':   return R_G;
-        case 'W':   return R_W;
-        case 'Y':   return R_Y;
+        case 'R':   return R_F;
+        case 'O':   return R_B;
+        case 'B':   return R_L;
+        case 'G':   return R_R;
+        case 'W':   return R_U;
+        case 'Y':   return R_D;
         default:
             LOG("invalid cube face color");
-            return R_W;
+            return R_U;
     }
 }
 
@@ -180,4 +180,8 @@ rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
   }
   rubik_sequence_t seq = {l, ops};
   return seq;
+}
+
+void rubik_sequence_rotate(rubik_sequence_t *s, int idx, int len, rubik_side_t bottom){
+    // TODO
 }
