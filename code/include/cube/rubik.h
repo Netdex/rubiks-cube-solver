@@ -86,10 +86,21 @@ char* rubik_convert_facelet(rubik_cube_t c);
  */
 rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
 
+void rubik_sequence_display(rubik_sequence_t *s);
+
 /*
  * Parses sequence to create a solver friendly solution that takes away all top and bottom turns buy turning the cube to a solvable state
  */
 rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s);
+
+rubik_sequence_t rubik_sequence_copy(rubik_sequence_t const *s);
+
+/*
+ * Count the number of times a certain move appears in a rotated sequence
+ * 
+ * For minimizing the number of rotations
+ */
+int rubik_sequence_count_op(rubik_sequence_t const *s, int idx, int len, rubik_side_t op, rubik_side_t rot);
 
 /*
  * Mutate a sequence so that it performs the same operations but in a different rotation

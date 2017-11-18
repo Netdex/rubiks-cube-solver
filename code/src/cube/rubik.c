@@ -6,7 +6,7 @@
 #include "util/log.h"
 
 char RUBIK_MAP_FACE_CHAR[]  = {'U', 'R', 'F', 'D', 'L', 'B'};
-char RUBIK_MAP_ROT_CHAR[]   = {'x', 'r', 'f', 'd', 'l', 'y'};
+char RUBIK_MAP_ROT_CHAR[]   = {'x', 'r', 'f', 'd', 'l', 'z'};
 char RUBIK_MAP_DIR_CHAR[]   = {' ', '\'', '2'};
 
 static rubik_color_t rubik_char_to_color(char c){
@@ -158,6 +158,12 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     }
 }
 
+void rubik_sequence_display(rubik_sequence_t *s){
+    char * seq = rubik_sequence_to_string(s);
+    printf("%s\n", seq);
+    free(seq);
+}
+
 rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
     // this is not an optimized solution.
     int l = s->length;
@@ -192,6 +198,22 @@ const char RUBIK_ROTATION_MATRIX[6][6] = {
     {4, 0, 2, 1, 3, 5},  // L
     {5, 1, 0, 2, 4, 3},  // B
 };
+
+rubik_sequence_t rubik_sequence_copy(rubik_sequence_t const *s){
+    rubik_op_t *ops = malloc(s->length * sizeof(rubik_op_t));
+    memcpy(ops, s->operations, s->length * sizeof(rubik_op_t));
+    rubik_sequence_t seq = {s->length, ops};
+    return seq;
+}
+
+int rubik_sequence_count_op(rubik_sequence_t const *s, int idx, int len, rubik_side_t op, rubik_side_t rot){
+    assert(idx + len <= s->length);
+    int count = 0;
+    for(int i = idx; i < idx + len; i++)
+        if(RUBIK_ROTATION_MATRIX[rot][s->operations[i].side] == op)
+            count++;
+    return count;
+}
 
 void rubik_sequence_rotate(rubik_sequence_t *s, int idx, int len, rubik_side_t bottom){
     assert(idx + len <= s->length);
