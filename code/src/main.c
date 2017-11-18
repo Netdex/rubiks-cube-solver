@@ -43,7 +43,7 @@ rubik_cube_t scan_cube(){
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
             for(int x = 0; x < 3; x++){
-                printf("(%f,%f,%f) ", color_mat[f][y][x].r, color_mat[f][y][x].g, color_mat[f][y][x].b);
+                printf("(%.2f,%.2f,%.2f) ", color_mat[f][y][x].r, color_mat[f][y][x].g, color_mat[f][y][x].b);
             }
             printf("\n");
         }
@@ -79,15 +79,24 @@ int main(void){
     LOG("generated sequence: %s\n", solution.str);
     assert(solution.error_code == 0);
     
-
+    LOG("optimizing sequence");
+    rubik_sequence_t trunc = rubik_cube_remove_up_down(&solution.seq);
     // TODO: transform sequence into a full rotation sequence w/o up and down
     
-    for(int i = 0; i < solution.seq.length; i++){
+    LOG("running sequence");
+    for(int i = 0; i < trunc.length; i++){
         motor_op_rotate_face(
-            solution.seq.operations[i].side, 
-            solution.seq.operations[i].direction);
-        motor_op_rotate_cube(solution.seq.operations[i].rotation);
+            trunc.operations[i].side, 
+            trunc.operations[i].direction);
+        if(trunc.operations[i].side != R_NOSIDE && trunc.operations[i].direction != R_NODIR){
+            printf("%d/%d ", trunc.operations[i].side, trunc.operations[i].direction);
+        }
+        motor_op_rotate_cube(trunc.operations[i].rotation);
+        if(trunc.operations[i].rotation != R_NOSIDE){
+            printf("%d/%d ", trunc.operations[i].side, trunc.operations[i].direction);
+        }
     }
     rubik_destroy_solution(&solution);
+    rubik_destroy_sequence(&trunc);
     return 0;
 }

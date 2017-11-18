@@ -18,6 +18,8 @@ uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp);
  */
 void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, int x1, int y1, int x2, int y2, float pad, rgb_t col_mat[3][3]);
 
+rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3]);
+
 /*
  * Builds a cube from average color values of cube,
  * clustering with k-memes
@@ -25,6 +27,6 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
  * Face order is U, R, F, D, L, B
  * Face orientation is defined in "ckociemba/facelets.h"
  */
-rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3]);
+rubik_cube_t cube_classify_cluster_from_colors(rgb_t colors[6][3][3]);
 
 #endif
