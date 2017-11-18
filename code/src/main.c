@@ -30,8 +30,9 @@ rubik_cube_t scan_cube(){
     rgb_t color_mat[6][3][3];
     int width, height, bpp;
     // image every face, and create rgb matrices of each face based on average color
-    for(int i = 0; i < 6; i++){
-        image = fake_cube_classify_read_webcam(&width, &height, &bpp); // remove "fake" for real case
+    for(int i = 0; i < 6; i++){ 
+        // remove "fake" for real case
+        image = fake_cube_classify_read_webcam(&width, &height, &bpp); 
         LOG("read face %d", i);
         cube_classify_face_image_argb(image, bpp, width, height, 
             SCAN_BOUNDS[0], SCAN_BOUNDS[1], SCAN_BOUNDS[2], SCAN_BOUNDS[3], 0.2f,
@@ -43,7 +44,8 @@ rubik_cube_t scan_cube(){
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
             for(int x = 0; x < 3; x++){
-                printf("(%.2f,%.2f,%.2f) ", color_mat[f][y][x].r, color_mat[f][y][x].g, color_mat[f][y][x].b);
+                printf("(%.2f,%.2f,%.2f) ", 
+                    color_mat[f][y][x].r, color_mat[f][y][x].g, color_mat[f][y][x].b);
             }
             printf("\n");
         }
@@ -53,7 +55,8 @@ rubik_cube_t scan_cube(){
     rubik_cube_t cube = cube_classify_from_colors(color_mat);
     LOG("cube built!");
 
-    // since the faces are not necessarily imaged in the correct orientation, rotate them accordingly
+    // since the faces are not necessarily imaged in the correct orientation, 
+    // rotate them accordingly
     for(int i = 0; i < 6; i++){
         cube.faces[i] = rubik_face_rotate(cube.faces[i], SCAN_IMAGE_OP_MAT[SCAN_ORDER_TO_FACE_ORDER[i]]);
     }
@@ -105,6 +108,9 @@ int main(void){
         }
         printf(" ");
     }
+    printf("\n");
+    LOG("done!");
+    
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
     return 0;
