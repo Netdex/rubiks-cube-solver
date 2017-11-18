@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include <stdlib.h>
 
 #include "cube/rubik.h"
@@ -157,38 +159,43 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
 }
 
 rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
-  int l = s->length + 20;
-  int opc = 0;
-  rubik_op_t *ops = calloc(l, sizeof(rubik_op_t));
-  for(int i = 0; i < s->length; i++){
-      rubik_op_t cop = {0};
-      if (s->operations[i].side == R_UP || s->operations[i].side == R_DOWN){
-        for(int j = i; j < s->length; j++){
-          switch(s->operations[j].side){
-            case R_UP:    s->operations[i].side = R_FRONT;  break;
-            case R_RIGHT: s->operations[i].side = R_RIGHT;  break;
-            case R_FRONT: s->operations[i].side = R_DOWN;   break;
-            case R_DOWN:  s->operations[i].side = R_BACK;   break;
-            case R_LEFT:  s->operations[i].side = R_LEFT;   break;
-            case R_BACK:  s->operations[i].side = R_UP;     break;
-            case R_NOSIDE: break;
-            }
-          }
-          // Adds a turning mechanism
-          cop.side = R_NOSIDE;
-          cop.direction = R_NODIR;
-          cop.rotation = R_FRONT;
-          ops[opc++] = cop;
-      }
-      // Add next step
-      cop.side = s->operations[i].side;
-      cop.direction = s->operations[i].direction;
-      ops[opc++] = cop;
-  }
-  rubik_sequence_t seq = {l, ops};
-  return seq;
+    // this is not an optimized solution.
+    int l = s->length;
+
+    rubik_op_t *ops = malloc(l * sizeof(rubik_op_t));
+    memcpy(ops, s->operations, l * sizeof(rubik_op_t));
+    rubik_sequence_t seq = {l, ops};
+    for(int i = 0; i < seq.length; i++){
+
+        // don't run this algorithm twice
+        assert(ops[i].rotation == R_NOSIDE);
+
+        if(ops[i].side == R_UP || ops[i].side == R_DOWN){
+            rubik_sequence_rotate(&seq, i, seq.length - i, R_RIGHT);
+            ops[i].rotation = R_RIGHT;
+        }
+    }
+    return seq;
 }
 
+/* 
+ * Mapping that maps a face j after a rotation i 
+ * to face RUBIK_ROTATION_MATRIX[i][j] 
+ * 
+ * TODO: check for mistakes
+ */
+const char RUBIK_ROTATION_MATRIX[6][6] = {
+    {3, 1, 5, 0, 4, 2},  // U
+    {1, 3, 2, 4, 0, 5},  // R
+    {2, 1, 3, 5, 4, 0},  // F
+    {3, 4, 2, 0, 1, 5},  // D
+    {4, 0, 2, 1, 3, 5},  // L
+    {5, 1, 0, 2, 4, 3},  // B
+};
+
 void rubik_sequence_rotate(rubik_sequence_t *s, int idx, int len, rubik_side_t bottom){
-    // TODO
+    assert(idx + len <= s->length);
+    for(int i = idx; i < idx + len; i++){
+        s->operations[i].side = RUBIK_ROTATION_MATRIX[bottom][s->operations[i].side];
+    }
 }

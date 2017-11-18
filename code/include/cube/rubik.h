@@ -28,19 +28,19 @@ typedef struct {
 } rubik_cube_t;
 
 typedef enum {
-    R_NOSIDE = -1,
-    R_UP    = 0,
-    R_RIGHT = 1,
-    R_FRONT = 2,
-    R_DOWN  = 3,
-    R_LEFT  = 4,
-    R_BACK  = 5,
+    R_NOSIDE    = -1,
+    R_UP        = 0,
+    R_RIGHT     = 1,
+    R_FRONT     = 2,
+    R_DOWN      = 3,
+    R_LEFT      = 4,
+    R_BACK      = 5,
 } rubik_side_t;
 
 typedef enum {
-    R_NODIR = -1,
-    R_CW = 0,
-    R_CCW = 1,
+    R_NODIR     = -1,
+    R_CW        = 0,
+    R_CCW       = 1,
     R_DOUBLE_CW = 2,
 } rubik_dir_t;
 
