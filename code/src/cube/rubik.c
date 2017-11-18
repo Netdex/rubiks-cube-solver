@@ -3,6 +3,10 @@
 #include "cube/rubik.h"
 #include "util/log.h"
 
+char RUBIK_MAP_FACE_CHAR[]  = {'U', 'R', 'F', 'D', 'L', 'B'};
+char RUBIK_MAP_ROT_CHAR[]   = {'x', 'r', 'f', 'd', 'l', 'y'};
+char RUBIK_MAP_DIR_CHAR[]   = {' ', '\'', '2'};
+
 static rubik_color_t rubik_char_to_color(char c){
     switch(c){
         case 'R':   return R_F;
@@ -90,9 +94,18 @@ void rubik_destroy_sequence(rubik_sequence_t *t){
 }
 
 char* rubik_sequence_to_string(rubik_sequence_t *t){
-    char* str = calloc(t->length * 3 + 1, 1);
+    char* str = calloc(t->length * 4 + 1, 1);
     int p = 0;
     for(int i = 0; i < t->length; i++){
+        switch(t->operations[i].rotation){
+            case R_FRONT:   str[p++] = 'f';  break;
+            case R_BACK:    str[p++] = 'b';  break;
+            case R_RIGHT:   str[p++] = 'r';  break;
+            case R_LEFT:    str[p++] = 'l';  break;
+            case R_UP:      str[p++] = 'x';  break;
+            case R_DOWN:    str[p++] = 'z';  break;
+            default: break;
+        }
         switch(t->operations[i].side){
             case R_UP:      str[p++] = 'U'; break;
             case R_RIGHT:   str[p++] = 'R'; break;
@@ -107,13 +120,6 @@ char* rubik_sequence_to_string(rubik_sequence_t *t){
             case R_CCW:         str[p++] = '\'';    str[p++] = ' ';   break;
             case R_DOUBLE_CW:   str[p++] = '2';     str[p++] = ' ';   break;
             case R_NODIR:       str[p++] = '_';      str[p++] = ' ';   break;
-        }
-        switch(t->operations[i].rotation){
-            case R_FRONT: str[p++] = 'f';  break;
-            case R_BACK: str[p++] = 'b';  break;
-            case R_RIGHT: str[p++] = 'r';  break;
-            case R_LEFT: str[p++] = 'l';  break;
-            default: break;
         }
     }
     return str;
@@ -135,8 +141,7 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     switch(dir){
         case R_CCW:         return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_DOUBLE_CW);
         case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW);
-        case R_NODIR:       return face;
-        default:
+        case R_CW:      
         {
             rubik_face_t rot = {
                 {
@@ -146,7 +151,8 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
                 }
             };
             return rot;
-        }
+        } 
+        default: return face;
     }
 }
 

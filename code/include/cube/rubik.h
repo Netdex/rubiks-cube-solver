@@ -1,6 +1,10 @@
 #ifndef RUBIK_H
 #define RUBIK_H
 
+extern char RUBIK_MAP_FACE_CHAR[];
+extern char RUBIK_MAP_ROT_CHAR[];
+extern char RUBIK_MAP_DIR_CHAR[];
+
 typedef enum {
    R_U = 0,
    R_R = 1,
@@ -89,6 +93,17 @@ rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s);
 
 /*
  * Mutate a sequence so that it performs the same operations but in a different rotation
+ * 
+ * @param bottom    After the cube rotation, this face becomes the new bottom.
+ * ie. R_LEFT would rotate the entire cube along the left/up-plane, 
+ * so that the left face is now on the bottom.
+ * 
+ * If bottom == NO_SIDE, do nothing.
+ * 
+ * Special cases:
+ * R_UP means rotate twice along up/front-plane     (the same as doing R_FRONT twice)
+ * R_DOWN means rotate twice along up/left-plane (the same as doing R_LEFT twice)
+ * A rotation in the front/left-plane requires 3 separate rotations.
  */
 void rubik_sequence_rotate(rubik_sequence_t *s, int idx, int len, rubik_side_t bottom);
 #endif
