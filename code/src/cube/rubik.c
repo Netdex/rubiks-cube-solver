@@ -135,6 +135,7 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     switch(dir){
         case R_CCW:         return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_DOUBLE_CW);
         case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW);
+        case R_NODIR:       return face;
         default:
         {
             rubik_face_t rot = {
