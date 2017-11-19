@@ -6,12 +6,12 @@
 
 /* GPIO pinout for motors */
 motor motors[] = {
-    {0,0,0,0},     // F
-    {0,0,0,0},     // B
-    {0,0,0,0},     // L
-    {0,0,0,0},     // R
-    {0,0,0,0},     // L/R retract/extend
-    {0,0,0,0},     // F/B retract/extend
+        {43,44,45,46},     // F
+        {7,8,9,10},        // B
+        {39,40,41,42},     // L
+        {15,16,17,18},     // R
+        {19,20,21,22},     // L/R retract/extend
+        {35,36,37,38},     // F/B retract/extend
 };
 
 void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
