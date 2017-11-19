@@ -12,6 +12,12 @@ void motor_init(motor m) {
     pin_low(8, m.pin4);
 }
 
+void motor_free(motor m) {
+    pin_low(8, m.pin1);
+    pin_low(8, m.pin2);
+    pin_low(8, m.pin3);
+    pin_low(8, m.pin4);
+}
 void step(int step, motor m) {
     step %= 8;
     if (step < 0) step += 16;
@@ -86,11 +92,12 @@ void steps(int steps, motor m) {
 }
 
 void q_turn(motor m, int dir) {
-    steps(1024 * (dir * (-2) + 1), m);
+    steps((1024 + OVERSHOOT) * (dir * (-2) + 1), m);
+    steps(-OVERSHOOT * (dir * (-2) + 1), m);
 }
 
 void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
-    for (int i = 0; i < 1024; i++) {
+    for (int i = 0; i < 1024 + OVERSHOOT; i++) {
         if (dir1) {
             step(-i, m1);
         } else {
@@ -103,14 +110,28 @@ void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
         }
         nsleep(DELAY);
     }
+    for (int i = 0; i < OVERSHOOT; i++) {
+        if (dir1) {
+            step(i, m1);
+        } else {
+            step(-i, m1);
+        }
+        if (dir2) {
+            step(i, m2);
+        } else {
+            step(-i, m2);
+        }
+        nsleep(DELAY);
+    }
 }
 
 void h_turn(motor m) {
-    steps(2048, m);
+    steps(2048 + OVERSHOOT, m);
+    steps(-OVERSHOOT, m);
 }
 
 void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
-    for (int i = 0; i < 2048; i++) {
+    for (int i = 0; i < 2048 + OVERSHOOT; i++) {
         if (dir1) {
             step(-i, m1);
         } else {
@@ -120,6 +141,19 @@ void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
             step(-i, m2);
         } else {
             step(i, m2);
+        }
+        nsleep(DELAY);
+    }
+    for (int i = 0; i < OVERSHOOT; i++) {
+        if (dir1) {
+            step(i, m1);
+        } else {
+            step(-i, m1);
+        }
+        if (dir2) {
+            step(i, m2);
+        } else {
+            step(-i, m2);
         }
         nsleep(DELAY);
     }

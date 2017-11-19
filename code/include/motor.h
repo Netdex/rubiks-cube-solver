@@ -7,6 +7,7 @@
 #include "util/nsleep.h" 
 
 #define DELAY 750000
+#define OVERSHOOT 48 
 #define DIR_CW 0
 #define DIR_CCW 1
 
@@ -18,6 +19,7 @@ typedef struct {
 } motor;
 
 void motor_init(motor m);
+void motor_free(motor m);
 void step(int step, motor m);
 void steps(int steps, motor m);
 void q_turn(motor m, int dir);
