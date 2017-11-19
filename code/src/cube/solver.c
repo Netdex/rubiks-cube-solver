@@ -45,7 +45,7 @@ rubik_solution_t rubik_solve(rubik_cube_t cube){
 rubik_solution_t rubik_solve_pattern(rubik_cube_t cube, rubik_cube_t target){
     char* facelets = rubik_convert_facelet(cube);
     char* pattern = rubik_convert_facelet(target);
-    char* patternized;
+    char* patternized = malloc(9 * 6 + 1);
     patternize(facelets, pattern, patternized);
 
     int error = 0;
