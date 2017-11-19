@@ -73,16 +73,42 @@ int main(void) {
         {7,8,9,10},        // B
         {39,40,41,42},     // L
         {15,16,17,18},     // R
-        {19,20,21,22},     // L/R retract/extend
-        {35,36,37,38},     // F/B retract/extend
+        {35,36,37,38},     // L/R retract/extend
+        {11,12,13,14},     // F/B retract/extend
     };
 
     printf("Initializing motors...\n");
     for (int i = 0; i < 6; i++) {
         motor_init(motors[i]);
     }
+
     printf("Motors initialized\n");
+
+    h_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
+    h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
+    steps(-2900, motors[4]);
+    q_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
+    steps(2900, motors[4]);
+    steps(-2900, motors[5]);
+    q_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
+    steps(2900, motors[5]);
+    h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
+
+    /*
     q_turn(motors[0], DIR_CW);
+    q_turn(motors[1], DIR_CW);
+    q_turn(motors[2], DIR_CW);
+    q_turn(motors[3], DIR_CW);
+
+    q_turn(motors[0], DIR_CCW);
+    q_turn(motors[1], DIR_CCW);
+    q_turn(motors[2], DIR_CCW);
+    q_turn(motors[3], DIR_CCW);
+    */
+
+    for (int i = 0; i < 6; i++) {
+        motor_free(motors[i]);
+    }
 
     return 0;
 }

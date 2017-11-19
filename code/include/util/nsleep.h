@@ -3,6 +3,6 @@
 
 #include <time.h>
 
-void nsleep(long n);
+void nsleep(long long n);
 
 #endif
