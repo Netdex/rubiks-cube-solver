@@ -8,11 +8,16 @@ LDIR 	:= lib
 BDIR 	:= bin
 IDIR 	:= include
 
+LBBBIODIR  := $(LDIR)/BBBiolib
+LBBBIOIDIR := $(LBBBIODIR)/include
+LBBBIOLIB  := $(LDIR)/libBBBio.a
+
 # COMPILER PARAMETERS
-CC 		:= gcc
-DEF		:= -D_POSIX_C_SOURCE=200809L #-DNO_GPIO # DISABLES BBBIOLIB
-CFLAGS 	:= -I$(IDIR) -Wall --std=c99 $(DEF) # -O2  -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
-LIBS 	:= -lm -lBBBio
+# TOOLCHAIN := 
+DEF		:= -D_POSIX_C_SOURCE=200809L
+INC 	:= -I$(IDIR) -I$(LBBBIOIDIR)
+CFLAGS 	:= $(INC) $(DEF) -Wall --std=c99 # -O2  -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
+LIBS 	:= -L$(LDIR) -lm -lBBBio
 PCH 	:= $(IDIR)/stdafx.h
 
 # SOURCE FILES
@@ -24,21 +29,25 @@ OBJ 	:= $(addprefix $(ODIR)/, $(SOURCES:$(SDIR)/%.c=%.o))
 
 all: $(BDIR)/$(BINFILE)
 
+$(LBBBIOLIB):
+	$(MAKE) -C $(LBBBIODIR)
+	
 $(PCH).gch: $(PCH)
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(TOOLCHAIN)gcc -c $< -o $@ $(CFLAGS)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS) $(PCH).gch
 	mkdir -p $(dir $@)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(TOOLCHAIN)gcc -c -o $@ $< $(CFLAGS)
 
-$(BDIR)/$(BINFILE): $(OBJ)
+$(BDIR)/$(BINFILE): $(OBJ) $(LBBBIOLIB)
 	mkdir -p $(BDIR)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(TOOLCHAIN)gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
 	find $(ODIR) -type f -name '*.o' -delete -print
 	rm -rf $(BDIR)/* -v
-	rm $(PCH).gch
+	rm -f $(PCH).gch
+	$(MAKE) -C $(LBBBIODIR) clean
 
 run: $(BDIR)/$(BINFILE)
 	(cd $(BDIR); ./$(BINFILE))
