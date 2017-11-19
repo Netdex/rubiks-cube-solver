@@ -16,7 +16,7 @@ DEPS 	:= $(shell find $(IDIR) -name '*.h')
 SOURCES := $(shell find $(SDIR) -name '*.c')
 OBJ 	:= $(addprefix $(ODIR)/, $(SOURCES:$(SDIR)/%.c=%.o))
 
-.PHONY: clean run all
+.PHONY: clean all
 
 all: $(BINFILE)
 
