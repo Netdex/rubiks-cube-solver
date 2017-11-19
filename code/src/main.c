@@ -58,7 +58,8 @@ rubik_cube_t scan_cube(){
     // since the faces are not necessarily imaged in the correct orientation, 
     // rotate them accordingly
     for(int i = 0; i < 6; i++){
-        cube.faces[i] = rubik_face_rotate(cube.faces[i], SCAN_IMAGE_OP_MAT[SCAN_ORDER_TO_FACE_ORDER[i]]);
+        cube.faces[i] = rubik_face_rotate(cube.faces[i], 
+            SCAN_IMAGE_OP_MAT[SCAN_ORDER_TO_FACE_ORDER[i]]);
     }
     return cube;
 }

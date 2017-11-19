@@ -42,6 +42,38 @@ rubik_solution_t rubik_solve(rubik_cube_t cube){
     }
 }
 
+rubik_solution_t rubik_solve_pattern(rubik_cube_t cube, rubik_cube_t target){
+    char* facelets = rubik_convert_facelet(cube);
+    char* pattern = rubik_convert_facelet(target);
+    char* patternized;
+    patternize(facelets, pattern, patternized);
+
+    int error = 0;
+    // input parameters in ckociemba/facelet.h
+	char *sol = solution(
+		patternized,
+		24,
+		1000,
+		0,
+        "cache",
+        &error
+    );
+
+    free(facelets);
+    free(pattern);
+    free(patternized);
+    
+    if(error || !sol){
+        rubik_solution_t solt = {error, RUBIK_SOLVE_ERROR_MSG[error]};
+        return solt;
+    }
+    else{
+        rubik_sequence_t seq = rubik_make_sequence(sol);
+        rubik_solution_t solt = {error, sol, seq};
+        return solt;
+    }
+}
+
 void rubik_destroy_solution(rubik_solution_t *sol){
     free(sol->str);
     rubik_destroy_sequence(&(sol->seq));
