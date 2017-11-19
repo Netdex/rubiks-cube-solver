@@ -67,6 +67,7 @@ rubik_cube_t scan_cube(){
 
 int main(void) {
     printf("Starting up...\n");
+    iolib_init();
     motor motors[] = {
         {43,44,45,46},     // F
         {7,8,9,10},        // B
