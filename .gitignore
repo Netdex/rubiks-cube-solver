@@ -1,3 +1,6 @@
+# Toolchain
+gcc-linaro-*
+
 # IDE garbage
 .vscode
 .idea
