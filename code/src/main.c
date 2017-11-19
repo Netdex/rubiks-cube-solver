@@ -5,6 +5,7 @@
 #include "cv/color.h"
 #include "cv/cube_classify.h"
 #include "motor_op.h"
+#include "motor.h"
 
 #include "stb_image.h"
 
@@ -64,7 +65,28 @@ rubik_cube_t scan_cube(){
     return cube;
 }
 
-int main(void){
+int main(void) {
+    printf("Starting up...\n");
+    motor motors[] = {
+        {43,44,45,46},     // F
+        {7,8,9,10},        // B
+        {39,40,41,42},     // L
+        {15,16,17,18},     // R
+        {19,20,21,22},     // L/R retract/extend
+        {35,36,37,38},     // F/B retract/extend
+    };
+
+    printf("Initializing motors...\n");
+    for (int i = 0; i < 6; i++) {
+        motor_init(motors[i]);
+    }
+    printf("Motors initialized\n");
+    q_turn(motors[0], DIR_CW);
+
+    return 0;
+}
+
+/*int main(void){
     srand(time(NULL));
 
     rubik_cube_t cube = scan_cube();
@@ -115,4 +137,4 @@ int main(void){
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
     return 0;
-}
+}*/

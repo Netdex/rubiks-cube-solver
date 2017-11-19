@@ -74,15 +74,19 @@ void step(int step, motor m) {
     }
 }
 
-void q_turn(motor m, int dir) {
-    for (int i = 0; i < 1024; i++) {
-        if (dir) {
+void steps(int steps, motor m) {
+    for (int i = 0; i < abs(steps); i++) {
+        if (steps < 0) {
             step(-i, m);
         } else {
             step(i, m);
         }
         nsleep(DELAY);
     }
+}
+
+void q_turn(motor m, int dir) {
+    steps(1024 * (dir * (-2) + 1), m);
 }
 
 void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
@@ -102,10 +106,7 @@ void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
 }
 
 void h_turn(motor m) {
-    for (int i = 0; i < 2048; i++) {
-        step(i, m);
-        nsleep(DELAY);
-    }
+    steps(2048, m);
 }
 
 void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
