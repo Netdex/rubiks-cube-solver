@@ -1,6 +1,7 @@
+#include "stdafx.h"
+
 #include "motor.h"
 
-#ifndef NO_GPIO
 void motor_init(motor m) {
     iolib_setdir(8, m.pin1, BBBIO_DIR_OUT);
     iolib_setdir(8, m.pin2, BBBIO_DIR_OUT);
@@ -158,4 +159,3 @@ void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
         nsleep(DELAY);
     }
 }
-#endif

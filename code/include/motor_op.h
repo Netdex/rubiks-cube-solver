@@ -6,7 +6,33 @@
 
 #include "cube/rubik.h"
 
+#define ARM_FB      4
+#define ARM_LR      5
+
+#define G_VERT      0
+#define G_HORIZ     1
+
+#define ARM_RETRACT 0
+#define ARM_PARTIAL 1
+#define ARM_EXTEND  2
+
+#define MOTOR_F     0 
+#define MOTOR_B     1
+#define MOTOR_L     2
+#define MOTOR_R     3
+#define MOTOR_FB    4
+#define MOTOR_LR    5
+
+/* index i, is motor steps to achieve operation i */
+const int ARM_OP_STEPS[] = {0, 1900, 2900};
+
+/* rotate face, update state */
+void motor_op_rot(int motor, int op); 
+/* retract/extend grabber arms, update state */
+void motor_op_arm_move(int arm, int op);
+
 void motor_op_init();
+void motor_op_reset();
 
 /*
  * Rotate this face of the cube.

@@ -9,7 +9,7 @@ IDIR 	:= include
 # COMPILER PARAMETERS
 #TOOLCHAIN := 
 DEF		:= -D_POSIX_C_SOURCE=200809L
-CFLAGS 	:= -I$(IDIR) -Wall --std=c99 $(DEF) -O2
+CFLAGS 	:= -I$(IDIR) --std=c99 $(DEF) -O2 -w
 
 # SOURCE FILES
 DEPS 	:= $(shell find $(IDIR) -name '*.h')
