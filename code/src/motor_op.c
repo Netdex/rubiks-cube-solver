@@ -82,18 +82,22 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
 }
 
 void motor_op_init(){
-    LOG("initializing motors...");
+#ifndef NO_GPIO
+    log_debug("initializing motors...");
     iolib_init();
     for (int i = 0; i < 6; i++) {
         motor_init(motors[i]);
     }
+#endif
 }
 
 void motor_op_reset(){
-    LOG("resetting motors...");
+#ifndef NO_GPIO
+    log_debug("resetting motors...");
     for (int i = 0; i < 6; i++) {
         motor_free(motors[i]);
     }
+#endif
 }
 
 /*
@@ -109,6 +113,7 @@ void motor_op_reset(){
  * 6. Turn face by direction.
  */
 void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
+#ifndef NO_GPIO
     assert(face != R_UP && face != R_DOWN);
     if(face == R_NOSIDE)    return;
     if(dir == R_NODIR)      return;
@@ -138,6 +143,7 @@ void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
     else {
         motor_op_rot(dmotor, (int) dir);
     }
+#endif
 }
 
 
@@ -154,6 +160,7 @@ void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
  * If down: do front twice
  */
 void motor_op_rotate_cube(rubik_side_t bottom){
+#ifndef NO_GPIO
     if(bottom == R_UP){
 
     } else if(bottom == R_DOWN){
@@ -163,4 +170,5 @@ void motor_op_rotate_cube(rubik_side_t bottom){
         motor_op_arms_move(PERP_ARM[smotor], ARM_RETRACT, ROT_ARM[smotor], ARM_EXTEND);
         // motor_op_rots(...)
     }
+#endif
 }
