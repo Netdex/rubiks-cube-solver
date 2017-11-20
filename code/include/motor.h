@@ -1,16 +1,17 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#ifndef NO_GPIO
+
 #include <BBBiolib.h>
-#endif
+
 #include "util/nsleep.h" 
 
-#define DELAY 750000
-#define OVERSHOOT 48 
-#define DIR_CW 0
-#define DIR_CCW 1
-
+#define DELAY       750000
+#define OVERSHOOT   48
+ 
+#define DIR_CW      0
+#define DIR_CCW     1
+#define DIR_DCW     2
 typedef struct {
     int bank;
     int pin1;

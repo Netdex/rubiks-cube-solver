@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "cube/rubik.h"
-#include "util/log.h"
 
 char RUBIK_MAP_FACE_CHAR[]  = {'U', 'R', 'F', 'D', 'L', 'B'};
 char RUBIK_MAP_ROT_CHAR[]   = {'x', 'r', 'f', 'd', 'l', 'z'};
@@ -18,7 +17,7 @@ static rubik_color_t rubik_char_to_color(char c){
         case 'W':   return R_U;
         case 'Y':   return R_D;
         default:
-            LOG("invalid cube face color");
+            log_warn("invalid cube face color");
             return R_U;
     }
 }
@@ -30,7 +29,7 @@ static char rubik_to_face_char(rubik_cube_t *cube, rubik_color_t c){
     if(c == cube->D.colors[1][1]) return 'D';
     if(c == cube->L.colors[1][1]) return 'L';
     if(c == cube->B.colors[1][1]) return 'B';
-    LOG("invaid cube face color");
+    log_warn("invaid cube face color");
     return ' ';
 }
 
