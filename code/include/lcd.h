@@ -2,9 +2,9 @@
 #define LCD_H
 
 #include "util/nsleep.h"
-#ifndef NO_GPIO
+
 #include <BBBiolib.h>
-#endif
+
 
 typedef struct {
     int rs_pin;
