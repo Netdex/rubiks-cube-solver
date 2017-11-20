@@ -11,14 +11,19 @@ uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
     return rgb_image;
 }
 
-void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, int x1, int y1, int x2, int y2, float pad, rgb_t col_mat[3][3])
+void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, rgb_t col_mat[3][3])
 {
-    assert(x1 >= 0 && x1 < width && x2 >= 0 && x2 < height);
-    assert(x1 < x2 && y1 < y2);
+    // Regions to average
+    // 3x3 is the face, 4 is x, y, w, h
+    int regions[3][3][4] = {
+        {{120, 69, 100, 100}, {273, 135, 105, 42}, {434, 75, 100, 100}},
+        {{188, 224, 32, 102}, {282, 240, 80, 80}, {427, 230, 40, 100}},
+        {{119, 378, 100, 100}, {268, 375, 100, 40}, {427, 378, 100, 100}}
+    };
+
+    assert(width == 640);
+    assert(height == 480);
     assert(bpp == 3);
-    assert(pad >= 0 && pad < 0.5);
-    int dx = (x2 - x1) / 3;
-    int dy = (y2 - y1) / 3;
 
     for (int y = 0; y < 3; y++)
     {
@@ -26,9 +31,9 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
         {
             rgb_t ac = {0};
 
-            for (int i = (int)(y1 + dy * y + dy * pad); i < (int)(y1 + dy * (y + 1) - dy * pad); i++)
+            for (int i = regions[y][x][1]; i < regions[y][x][1] + regions[y][x][3]; i++)
             {
-                for (int j = (int)(x1 + dx * x + dx * pad); j < (int)(x1 + dx * (x + 1) - dx * pad); j++)
+                for (int j = regions[y][x][0]; j < regions[y][x][0] + regions[y][x][2]; j++)
                 {
                     ac.r += ((float)image[(i * width + j) * 3]) / 255;
                     ac.g += ((float)image[(i * width + j) * 3 + 1]) / 255;
