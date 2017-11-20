@@ -3,6 +3,7 @@
 #include "motor.h"
 
 /* DOCUMENTATION IS IN motor_op.h */
+/* This file would probably benefit from flowcharts */
 
 /* map rubik_face_t to appropriate motor */
 int FACE_TO_MOTOR[] = {-1, 3, 0, -1, 2, 1};
@@ -78,6 +79,7 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
             step(sign1 * i, motors[arm1]);
         if(i < abs(delta2))
             step(sign2 * i, motors[arm2]);
+        nsleep(DELAY);
     }
 }
 
@@ -98,6 +100,23 @@ void motor_op_reset(){
         motor_free(motors[i]);
     }
 #endif
+}
+
+/*
+ * Motor Operation: Sequence Execution
+ * 
+ * Steps to execute a seequence:
+ * Consider current operation
+ * 1. If exist, perform curr op rot
+ * Consider next operation
+ * 2. If not exist next op rot, and
+ *    curr op face opposes next op face,
+ *    perform concurrent motor_op_rots
+ * 3. Else, perform motor_op_rot curr
+ * 4. Increment op dep. rots/rot
+ */
+void motor_op_perform_sequence(rubik_sequence_t seq){
+    // TODO
 }
 
 /*

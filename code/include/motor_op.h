@@ -25,7 +25,7 @@
 
 /* rotate face, update state */
 void motor_op_rot(int motor, int op); 
-/* rotate multiple faces simultaneously */
+/* rotate two faces simultaneously */
 void motor_op_rots(int motor1, int op1, int motor2, int op2);
 /* retract/extend grabber arms, update state */
 void motor_op_arm_move(int arm, int op);
@@ -34,6 +34,8 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2);
 
 void motor_op_init();
 void motor_op_reset();
+
+void motor_op_perform_sequence(rubik_sequence_t seq);
 
 /*
  * Rotate this face of the cube.

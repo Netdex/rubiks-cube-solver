@@ -9,6 +9,7 @@
 
 #include "stb_image.h"
 
+/*
 int main(void) {
     printf("Starting up...\n");
     iolib_init();
@@ -38,24 +39,23 @@ int main(void) {
     steps(2900, motors[5]);
     h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
 
-    /*
-    q_turn(motors[0], DIR_CW);
-    q_turn(motors[1], DIR_CW);
-    q_turn(motors[2], DIR_CW);
-    q_turn(motors[3], DIR_CW);
+    
+    // q_turn(motors[0], DIR_CW);
+    // q_turn(motors[1], DIR_CW);
+    // q_turn(motors[2], DIR_CW);
+    // q_turn(motors[3], DIR_CW);
 
-    q_turn(motors[0], DIR_CCW);
-    q_turn(motors[1], DIR_CCW);
-    q_turn(motors[2], DIR_CCW);
-    q_turn(motors[3], DIR_CCW);
-    */
-
+    // q_turn(motors[0], DIR_CCW);
+    // q_turn(motors[1], DIR_CCW);
+    // q_turn(motors[2], DIR_CCW);
+    // q_turn(motors[3], DIR_CCW);
+    
     for (int i = 0; i < 6; i++) {
         motor_free(motors[i]);
     }
 
     return 0;
-}
+}/*
 
 /* full cube rotations to perform while scanning */
 rubik_side_t    SCAN_CUBE_OP_MAT[]           = {R_LEFT, R_LEFT, R_LEFT, R_FRONT, R_UP, R_NOSIDE};
@@ -115,7 +115,7 @@ rubik_cube_t scan_cube(){
     }
     return cube;
 }
-/*
+
 int main(void){
     log_set_level(LOG_TRACE);
 
@@ -148,26 +148,27 @@ int main(void){
     free(str);
     
     log_info("running sequence");
-    for(int i = 0; i < trunc.length; i++){
-        motor_op_rotate_cube(trunc.operations[i].rotation);
-        if(trunc.operations[i].rotation != R_NOSIDE){
-            log_debug("execute rotate %c", 
-                RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
-        }
-        motor_op_rotate_face(
-            trunc.operations[i].side, 
-            trunc.operations[i].direction);
-        if(trunc.operations[i].side != R_NOSIDE 
-            && trunc.operations[i].direction != R_NODIR){
-            log_debug("execute face %c%c", 
-                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
-                RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
-        }
-    }
+    // TODO: this is not proper execution
+    // for(int i = 0; i < trunc.length; i++){
+    //     motor_op_rotate_cube(trunc.operations[i].rotation);
+    //     if(trunc.operations[i].rotation != R_NOSIDE){
+    //         log_debug("execute rotate %c", 
+    //             RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
+    //     }
+    //     motor_op_rotate_face(
+    //         trunc.operations[i].side, 
+    //         trunc.operations[i].direction);
+    //     if(trunc.operations[i].side != R_NOSIDE 
+    //         && trunc.operations[i].direction != R_NODIR){
+    //         log_debug("execute face %c%c", 
+    //             RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
+    //             RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
+    //     }
+    // }
     log_info("done!");
     
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
     motor_op_reset();
     return 0;
-}*/
+}
