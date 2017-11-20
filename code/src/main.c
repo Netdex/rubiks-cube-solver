@@ -149,22 +149,22 @@ int main(void){
     
     log_info("running sequence");
     // TODO: this is not proper execution
-    // for(int i = 0; i < trunc.length; i++){
-    //     motor_op_rotate_cube(trunc.operations[i].rotation);
-    //     if(trunc.operations[i].rotation != R_NOSIDE){
-    //         log_debug("execute rotate %c", 
-    //             RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
-    //     }
-    //     motor_op_rotate_face(
-    //         trunc.operations[i].side, 
-    //         trunc.operations[i].direction);
-    //     if(trunc.operations[i].side != R_NOSIDE 
-    //         && trunc.operations[i].direction != R_NODIR){
-    //         log_debug("execute face %c%c", 
-    //             RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
-    //             RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
-    //     }
-    // }
+    for(int i = 0; i < trunc.length; i++){
+        motor_op_rotate_cube(trunc.operations[i].rotation);
+        if(trunc.operations[i].rotation != R_NOSIDE){
+            log_debug("execute rotate %c", 
+                RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
+        }
+        motor_op_rotate_face(
+            trunc.operations[i].side, 
+            trunc.operations[i].direction);
+        if(trunc.operations[i].side != R_NOSIDE 
+            && trunc.operations[i].direction != R_NODIR){
+            log_debug("execute face %c%c", 
+                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
+                RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
+        }
+    }
     log_info("done!");
     
     rubik_destroy_solution(&solution);

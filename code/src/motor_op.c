@@ -12,9 +12,9 @@ const int ARM_OP_STEPS[] = {0, 1900, 2900};
 /* grabbers A[i] must be vertical when doing a rotation on face i */
 int MOTOR_REQ_VERT[4][2] = {
     {MOTOR_L, MOTOR_R},     // F
-    {MOTOR_L, MOTOR_R},     // B
+    {MOTOR_R, MOTOR_L},     // B
     {MOTOR_F, MOTOR_B},     // L
-    {MOTOR_F, MOTOR_B}      // R
+    {MOTOR_B, MOTOR_F}      // R
 };
 /* parallel arm to rotation on motor i */
 int ROT_ARM[4] = { MOTOR_FB, MOTOR_FB, MOTOR_LR, MOTOR_LR};
@@ -50,15 +50,30 @@ union motor_op_state {
 
 
 void motor_op_rot(int motor, int op){
-    state.pos[motor] = !state.pos[motor];
-    q_turn(motors[motor], op);
+    assert(motor >= MOTOR_F && motor <= MOTOR_R);
+    assert(op >= DIR_CW && op <= DIR_DCW);
+    
+    if(op == DIR_DCW){
+        h_turn(motors[motor]);
+    } else {
+        state.pos[motor] = !state.pos[motor];
+        q_turn(motors[motor], op);
+    }
 }
 
 void motor_op_rots(int motor1, int op1, int motor2, int op2){
-    // TODO
+    assert(motor1 >= MOTOR_F && motor1 <= MOTOR_R);
+    assert(motor2 >= MOTOR_F && motor2 <= MOTOR_R);
+    assert(op1 >= DIR_CW && op1 <= DIR_DCW);
+    assert(op2 >= DIR_CW && op2 <= DIR_DCW);
+    
+    // TODO   
 }
 
 void motor_op_arm_move(int arm, int op){
+    assert(arm >= MOTOR_FB && arm <= MOTOR_LR);
+    assert(op >= ARM_RETRACT && op <= ARM_EXTEND);
+
     int delta = ARM_OP_STEPS[state.pos[arm]] - ARM_OP_STEPS[op];
     state.pos[arm] = op;
     if(delta != 0) {
@@ -67,6 +82,10 @@ void motor_op_arm_move(int arm, int op){
 }
 
 void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
+    assert(arm1 >= ARM_FB && arm1 <= ARM_LR);
+    assert(arm2 >= ARM_FB && arm2 <= ARM_LR);
+    assert(arm1 != arm2);
+
     int delta1 = ARM_OP_STEPS[state.pos[arm1]] - ARM_OP_STEPS[op1];
     int delta2 = ARM_OP_STEPS[state.pos[arm2]] - ARM_OP_STEPS[op2];
 
@@ -117,6 +136,7 @@ void motor_op_reset(){
  */
 void motor_op_perform_sequence(rubik_sequence_t seq){
     // TODO
+
 }
 
 /*
@@ -131,41 +151,41 @@ void motor_op_perform_sequence(rubik_sequence_t seq){
  * 5. Ensure parallel arm is retracted.
  * 6. Turn face by direction.
  */
-void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
-#ifndef NO_GPIO
-    assert(face != R_UP && face != R_DOWN);
-    if(face == R_NOSIDE)    return;
-    if(dir == R_NODIR)      return;
 
-    // motor corresponding to face we want to rotate
-    int dmotor = FACE_TO_MOTOR[face];
-    
+void motor_op_rotate_face(int fmotor, int op){
+#ifndef NO_GPIO
+    assert(fmotor >= MOTOR_F && fmotor <= MOTOR_R);
+    assert(op >= DIR_CW && op <= DIR_DCW);
+
     // check if perpendicular grabbers are vertical
-    if(state.pos[MOTOR_REQ_VERT[dmotor][0]] != G_VERT
-    || state.pos[MOTOR_REQ_VERT[dmotor][1]] != G_VERT){
+    if(state.pos[MOTOR_REQ_VERT[fmotor][0]] != G_VERT
+    || state.pos[MOTOR_REQ_VERT[fmotor][1]] != G_VERT){
         // orient perpendicular grabbers to vertical
-        motor_op_arm_move(PERP_ARM[dmotor], ARM_PARTIAL);
+        motor_op_arm_move(PERP_ARM[fmotor], ARM_PARTIAL);
         for(int i = 0; i < 2; i++){
-            if(state.pos[MOTOR_REQ_VERT[dmotor][i] != G_VERT])
-                motor_op_rot(MOTOR_REQ_VERT[dmotor][i], DIR_CW);
+            if(state.pos[MOTOR_REQ_VERT[fmotor][i] != G_VERT])
+                motor_op_rot(MOTOR_REQ_VERT[fmotor][i], DIR_CW);
         }
     }
     // retract all arms
-    motor_op_arm_move(PERP_ARM[dmotor], ARM_RETRACT);
-    motor_op_arm_move(ROT_ARM[dmotor], ARM_RETRACT);
+    motor_op_arm_move(PERP_ARM[fmotor], ARM_RETRACT);
+    motor_op_arm_move(ROT_ARM[fmotor], ARM_RETRACT);
 
     // perform rotation
-    if(dir == R_DOUBLE_CW){
-        motor_op_rot(dmotor, DIR_CW);
-        motor_op_rot(dmotor, DIR_CW);
-    }
-    else {
-        motor_op_rot(dmotor, (int) dir);
-    }
+    motor_op_rot(fmotor, op);
 #endif
 }
 
-
+/* 
+ * when motor i needs to become the bottom, then
+ * turn MOT_A by A[i][MOT_A] and MOT_B
+ */
+int MOTOR_TO_ROT[4][2] = {
+    {R_CW, R_CCW}, // F
+    {R_CW, R_CCW}, // B
+    {R_CCW, R_CW}, // L
+    {R_CCW, R_CW}, // R
+};
 /*
  * Motor Operation: Cube Rotation
  * 
@@ -181,13 +201,16 @@ void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
 void motor_op_rotate_cube(rubik_side_t bottom){
 #ifndef NO_GPIO
     if(bottom == R_UP){
-
+        motor_op_rotate_cube(R_LEFT);
+        motor_op_rotate_cube(R_LEFT);
     } else if(bottom == R_DOWN){
-        
+        motor_op_rotate_cube(R_FRONT);
+        motor_op_rotate_cube(R_FRONT);
     } else {
         int smotor = FACE_TO_MOTOR[bottom];
         motor_op_arms_move(PERP_ARM[smotor], ARM_RETRACT, ROT_ARM[smotor], ARM_EXTEND);
-        // motor_op_rots(...)
+        motor_op_rots(MOTOR_REQ_VERT[smotor][0], MOTOR_TO_ROT[smotor][0],
+                        MOTOR_REQ_VERT[smotor][1], MOTOR_TO_ROT[smotor][1]);
     }
 #endif
 }

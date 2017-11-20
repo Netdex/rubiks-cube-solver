@@ -47,8 +47,9 @@ void motor_op_perform_sequence(rubik_sequence_t seq);
  * @param dir   The direction to rotate that face
  * If dir == NO_DIR, do nothing.
  */
-void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir);
-
+void motor_op_rotate_face(int fmotor, int op);
+void motor_op_rotate_faces(rubik_side_t f1, rubik_dir_t d1,
+                            rubik_side_t f2, rubik_dir_t d2);
 /*
  * Rotate the entire cube in such a manner that the
  * given face becomes the bottom of the cube.
