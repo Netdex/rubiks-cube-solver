@@ -69,12 +69,12 @@ int main(void) {
     printf("Starting up...\n");
     iolib_init();
     motor motors[] = {
-        {43,44,45,46},     // F
-        {7,8,9,10},        // B
-        {39,40,41,42},     // L
-        {15,16,17,18},     // R
-        {35,36,37,38},     // L/R retract/extend
-        {11,12,13,14},     // F/B retract/extend
+    {9, 11, 12, 13, 14}, // F
+    {8, 37, 38, 39, 40}, // B
+    {8, 33, 34, 35, 36}, // L
+    {8, 11, 12, 13, 14}, // R
+    {8, 7, 8, 9, 10},    // F/B retract/extend
+    {8, 15, 16, 17, 18}, // L/R retract/extend
     };
 
     printf("Initializing motors...\n");

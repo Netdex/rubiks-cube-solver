@@ -3,21 +3,21 @@
 #include "motor.h"
 
 void motor_init(motor m) {
-    iolib_setdir(8, m.pin1, BBBIO_DIR_OUT);
-    iolib_setdir(8, m.pin2, BBBIO_DIR_OUT);
-    iolib_setdir(8, m.pin3, BBBIO_DIR_OUT);
-    iolib_setdir(8, m.pin4, BBBIO_DIR_OUT);
-    pin_low(8, m.pin1);
-    pin_low(8, m.pin2);
-    pin_low(8, m.pin3);
-    pin_low(8, m.pin4);
+    iolib_setdir(m.bank, m.pin1, BBBIO_DIR_OUT);
+    iolib_setdir(m.bank, m.pin2, BBBIO_DIR_OUT);
+    iolib_setdir(m.bank, m.pin3, BBBIO_DIR_OUT);
+    iolib_setdir(m.bank, m.pin4, BBBIO_DIR_OUT);
+    pin_low(m.bank, m.pin1);
+    pin_low(m.bank, m.pin2);
+    pin_low(m.bank, m.pin3);
+    pin_low(m.bank, m.pin4);
 }
 
 void motor_free(motor m) {
-    pin_low(8, m.pin1);
-    pin_low(8, m.pin2);
-    pin_low(8, m.pin3);
-    pin_low(8, m.pin4);
+    pin_low(m.bank, m.pin1);
+    pin_low(m.bank, m.pin2);
+    pin_low(m.bank, m.pin3);
+    pin_low(m.bank, m.pin4);
 }
 void step(int step, motor m) {
     step %= 8;
@@ -25,58 +25,58 @@ void step(int step, motor m) {
     step %= 8;
     switch (step) {
     case 0:
-        pin_low(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_high(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_high(m.bank, m.pin4);
 	break;
     case 1:
-        pin_low(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_high(8, m.pin3);
-        pin_high(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_high(m.bank, m.pin3);
+        pin_high(m.bank, m.pin4);
 	break;
     case 2:
-        pin_low(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_high(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_high(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     case 3:
-        pin_low(8, m.pin1);
-        pin_high(8, m.pin2);
-        pin_high(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_high(m.bank, m.pin2);
+        pin_high(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     case 4:
-        pin_low(8, m.pin1);
-        pin_high(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_high(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     case 5:
-        pin_high(8, m.pin1);
-        pin_high(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_high(m.bank, m.pin1);
+        pin_high(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     case 6:
-        pin_high(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_high(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     case 7:
-        pin_high(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_high(8, m.pin4);
+        pin_high(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_high(m.bank, m.pin4);
 	break;
     default:
-        pin_low(8, m.pin1);
-        pin_low(8, m.pin2);
-        pin_low(8, m.pin3);
-        pin_low(8, m.pin4);
+        pin_low(m.bank, m.pin1);
+        pin_low(m.bank, m.pin2);
+        pin_low(m.bank, m.pin3);
+        pin_low(m.bank, m.pin4);
 	break;
     }
 }

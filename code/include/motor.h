@@ -12,6 +12,7 @@
 #define DIR_CCW 1
 
 typedef struct {
+    int bank;
     int pin1;
     int pin2;
     int pin3;

@@ -22,12 +22,12 @@ int PERP_ARM[4] = { MOTOR_LR, MOTOR_LR, MOTOR_FB, MOTOR_FB };
 
 /* GPIO pinout for motors */
 motor motors[] = {
-    {43, 44, 45, 46}, // F
-    {7, 8, 9, 10},    // B
-    {39, 40, 41, 42}, // L
-    {15, 16, 17, 18}, // R
-    {11, 12, 13, 14}, // F/B retract/extend
-    {35, 36, 37, 38}, // L/R retract/extend
+    {9, 11, 12, 13, 14}, // F
+    {8, 37, 38, 39, 40}, // B
+    {8, 33, 34, 35, 36}, // L
+    {8, 11, 12, 13, 14}, // R
+    {8, 7, 8, 9, 10},    // F/B retract/extend
+    {8, 15, 16, 17, 18}, // L/R retract/extend
 };
 
 /* motor position state for optimizing moves */
