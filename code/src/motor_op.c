@@ -6,6 +6,19 @@
 
 /* map rubik_face_t to appropriate motor */
 int FACE_TO_MOTOR[] = {-1, 3, 0, -1, 2, 1};
+/* index i, is motor steps to achieve operation i */
+const int ARM_OP_STEPS[] = {0, 1900, 2900};
+/* grabbers A[i] must be vertical when doing a rotation on face i */
+int MOTOR_REQ_VERT[4][2] = {
+    {MOTOR_L, MOTOR_R},     // F
+    {MOTOR_L, MOTOR_R},     // B
+    {MOTOR_F, MOTOR_B},     // L
+    {MOTOR_F, MOTOR_B}      // R
+};
+/* parallel arm to rotation on motor i */
+int ROT_ARM[4] = { MOTOR_FB, MOTOR_FB, MOTOR_LR, MOTOR_LR};
+/* perpendicular arm to rotation on motor i */
+int PERP_ARM[4] = { MOTOR_LR, MOTOR_LR, MOTOR_FB, MOTOR_FB };
 
 /* GPIO pinout for motors */
 motor motors[] = {
@@ -18,20 +31,21 @@ motor motors[] = {
 };
 
 /* motor position state for optimizing moves */
-struct motor_op_state {
-    // (vertical = 0, horizontal = 0)
-    union {
-        struct {
-            int f;      // position of front grabber
-            int b;      // position of back grabber
-            int l;      // position of left grabber
-            int r;      // position of right grabber
-            int fb;     // position of f/b arm
-            int lr;     // position of l/r arm
-        };
-        int pos[6];    // grabber positions
+
+
+union motor_op_state {
+    struct {
+        // (vertical = 0, horizontal = 0)
+        int f;      // position of front grabber
+        int b;      // position of back grabber
+        int l;      // position of left grabber
+        int r;      // position of right grabber
+        // (retracted = 0, partial = 1, extended = 2)
+        int fb;     // position of f/b arm
+        int lr;     // position of l/r arm
     };
-} state = {0, 0, 0, 0, 0, 0};
+    int pos[6];    // grabber positions
+} state = {{0, 0, 0, 0, 0, 0}};
 
 
 void motor_op_rot(int motor, int op){
@@ -39,11 +53,31 @@ void motor_op_rot(int motor, int op){
     q_turn(motors[motor], op);
 }
 
+void motor_op_rots(int motor1, int op1, int motor2, int op2){
+    // TODO
+}
+
 void motor_op_arm_move(int arm, int op){
     int delta = ARM_OP_STEPS[state.pos[arm]] - ARM_OP_STEPS[op];
     state.pos[arm] = op;
     if(delta != 0) {
         steps(delta, motors[arm]);
+    }
+}
+
+void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
+    int delta1 = ARM_OP_STEPS[state.pos[arm1]] - ARM_OP_STEPS[op1];
+    int delta2 = ARM_OP_STEPS[state.pos[arm2]] - ARM_OP_STEPS[op2];
+
+    int sign1 = delta1 < 0 ? -1 : 1;
+    int sign2 = delta2 < 0 ? -1 : 1;
+    
+    // move both motors together
+    for(int i = 0; i < max(abs(delta1), abs(delta2)); i++){
+        if(i < abs(delta1))
+            step(sign1 * i, motors[arm1]);
+        if(i < abs(delta2))
+            step(sign2 * i, motors[arm2]);
     }
 }
 
@@ -61,18 +95,6 @@ void motor_op_reset(){
         motor_free(motors[i]);
     }
 }
-
-/* grabbers A[i] must be vertical when doing a rotation on face i */
-int MOTOR_REQ_VERT[4][2] = {
-    {MOTOR_L, MOTOR_R},     // F
-    {MOTOR_L, MOTOR_R},     // B
-    {MOTOR_F, MOTOR_B},     // L
-    {MOTOR_F, MOTOR_B}      // R
-};
-/* parallel arm to rotation on motor i */
-int ROT_ARM[4] = { MOTOR_FB, MOTOR_FB, MOTOR_LR, MOTOR_LR};
-/* perpendicular arm to rotation on motor i */
-int PERP_ARM[4] = { MOTOR_LR, MOTOR_LR, MOTOR_FB, MOTOR_FB };
 
 /*
  * Motor Operation: Face Rotation
@@ -118,6 +140,7 @@ void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
     }
 }
 
+
 /*
  * Motor Operation: Cube Rotation
  * 
@@ -131,5 +154,13 @@ void motor_op_rotate_face(rubik_side_t face, rubik_dir_t dir){
  * If down: do front twice
  */
 void motor_op_rotate_cube(rubik_side_t bottom){
+    if(bottom == R_UP){
 
+    } else if(bottom == R_DOWN){
+        
+    } else {
+        int smotor = FACE_TO_MOTOR[bottom];
+        motor_op_arms_move(PERP_ARM[smotor], ARM_RETRACT, ROT_ARM[smotor], ARM_EXTEND);
+        // motor_op_rots(...)
+    }
 }

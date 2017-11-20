@@ -23,13 +23,14 @@
 #define MOTOR_FB    4
 #define MOTOR_LR    5
 
-/* index i, is motor steps to achieve operation i */
-const int ARM_OP_STEPS[] = {0, 1900, 2900};
-
 /* rotate face, update state */
 void motor_op_rot(int motor, int op); 
+/* rotate multiple faces simultaneously */
+void motor_op_rots(int motor1, int op1, int motor2, int op2);
 /* retract/extend grabber arms, update state */
 void motor_op_arm_move(int arm, int op);
+/* retract/extend both grabber arms simulatenously, update state */
+void motor_op_arms_move(int arm1, int op1, int arm2, int op2);
 
 void motor_op_init();
 void motor_op_reset();
