@@ -14,7 +14,7 @@ LBBBIOLIB  := $(LDIR)/libBBBio.a
 
 # COMPILER PARAMETERS
 # TOOLCHAIN := 
-DEF		:= -D_POSIX_C_SOURCE=200809L
+DEF		:= -D_POSIX_C_SOURCE=200809L -DLOG_USE_COLOR #-DNO_GPIO
 INC 	:= -I$(IDIR) -I$(LBBBIOIDIR)
 CFLAGS 	:= $(INC) $(DEF) -Wall --std=c99 -O2 # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
 LIBS 	:= -L$(LDIR) -lm -lBBBio
