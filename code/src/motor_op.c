@@ -8,13 +8,20 @@
 /* map rubik_face_t to appropriate motor */
 int FACE_TO_MOTOR[] = {-1, 3, 0, -1, 2, 1};
 /* index i, is motor steps to achieve operation i */
-const int ARM_OP_STEPS[] = {0, 1900, 2900};
+const int ARM_OP_STEPS[] = {0, 1900, 2950};
 /* grabbers A[i] must be vertical when doing a rotation on face i */
 int MOTOR_REQ_VERT[4][2] = {
     {MOTOR_L, MOTOR_R},     // F
     {MOTOR_R, MOTOR_L},     // B
     {MOTOR_F, MOTOR_B},     // L
     {MOTOR_B, MOTOR_F}      // R
+};
+/* grabbers A[i] must be vertical when doing a rotation on face i */
+int MOTOR_REQ_VERT_INV[4][2] = {
+    {MOTOR_F, MOTOR_B},     // F
+    {MOTOR_B, MOTOR_F},     // B
+    {MOTOR_L, MOTOR_R},     // L
+    {MOTOR_R, MOTOR_L}      // R
 };
 /* parallel arm to rotation on motor i */
 int ROT_ARM[4] = { MOTOR_FB, MOTOR_FB, MOTOR_LR, MOTOR_LR};
@@ -36,7 +43,7 @@ motor motors[] = {
 
 union motor_op_state {
     struct {
-        // (vertical = 0, horizontal = 0)
+        // (vertical = 0, horizontal = 1)
         int f;      // position of front grabber
         int b;      // position of back grabber
         int l;      // position of left grabber
@@ -46,19 +53,20 @@ union motor_op_state {
         int lr;     // position of l/r arm
     };
     int pos[6];    // grabber positions
-} state = {{0, 0, 0, 0, 0, 0}};
-
+} state = {{G_VERT, G_VERT, G_VERT, G_VERT, ARM_EXTEND, ARM_EXTEND}};
 
 void motor_op_rot(int motor, int op){
     assert(motor >= MOTOR_F && motor <= MOTOR_R);
     assert(op >= DIR_CW && op <= DIR_DCW);
     
-    if(op == DIR_DCW){
-        h_turn(motors[motor]);
+    if(op >= DIR_DCW){
+        h_turn(motors[motor], op);
     } else {
         state.pos[motor] = !state.pos[motor];
         q_turn(motors[motor], op);
     }
+    motor_op_reset();
+    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }
 
 void motor_op_rots(int motor1, int op1, int motor2, int op2){
@@ -66,8 +74,26 @@ void motor_op_rots(int motor1, int op1, int motor2, int op2){
     assert(motor2 >= MOTOR_F && motor2 <= MOTOR_R);
     assert(op1 >= DIR_CW && op1 <= DIR_DCW);
     assert(op2 >= DIR_CW && op2 <= DIR_DCW);
+
+    if (op1 < DIR_DCW) state.pos[motor1] = !state.pos[motor1];
+    if (op2 < DIR_DCW) state.pos[motor2] = !state.pos[motor2];
     
-    // TODO   
+    // Move both motors together.
+    if (op1 >= DIR_DCW && op2 >= DIR_DCW) {
+        h_turn_d(motors[motor1], motors[motor2], op1, op2);
+
+    }
+    else {
+        q_turn_d(motors[motor1], motors[motor2], op1, op2);
+        if (op1 >= DIR_DCW) {
+            q_turn(motors[motor1], op1);
+        }
+        if (op2 >= DIR_DCW) {
+            q_turn(motors[motor2], op2);
+        }
+    }
+    motor_op_reset();
+    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }
 
 void motor_op_arm_move(int arm, int op){
@@ -79,6 +105,8 @@ void motor_op_arm_move(int arm, int op){
     if(delta != 0) {
         steps(delta, motors[arm]);
     }
+    motor_op_reset();
+    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }
 
 void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
@@ -88,6 +116,9 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
 
     int delta1 = ARM_OP_STEPS[state.pos[arm1]] - ARM_OP_STEPS[op1];
     int delta2 = ARM_OP_STEPS[state.pos[arm2]] - ARM_OP_STEPS[op2];
+
+    state.pos[arm1] = op1;
+    state.pos[arm2] = op2;
 
     int sign1 = delta1 < 0 ? -1 : 1;
     int sign2 = delta2 < 0 ? -1 : 1;
@@ -100,6 +131,8 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
             step(sign2 * i, motors[arm2]);
         nsleep(DELAY);
     }
+    motor_op_reset();
+    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }
 
 void motor_op_init(){
@@ -160,11 +193,26 @@ void motor_op_rotate_face(int fmotor, int op){
     // check if perpendicular grabbers are vertical
     if(state.pos[MOTOR_REQ_VERT[fmotor][0]] != G_VERT
     || state.pos[MOTOR_REQ_VERT[fmotor][1]] != G_VERT){
+        if (state.pos[MOTOR_REQ_VERT_INV[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT_INV[fmotor][1]] == G_HORIZ) {
+            motor_op_rots(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW,
+                            MOTOR_REQ_VERT_INV[fmotor][1], DIR_CCW);
+        } else if (state.pos[MOTOR_REQ_VERT_INV[fmotor][0]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW);
+        } else if (state.pos[MOTOR_REQ_VERT_INV[fmotor][1]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][1], DIR_CW);
+        }
+
         // orient perpendicular grabbers to vertical
+        motor_op_arm_move(ROT_ARM[fmotor], ARM_RETRACT);
         motor_op_arm_move(PERP_ARM[fmotor], ARM_PARTIAL);
-        for(int i = 0; i < 2; i++){
-            if(state.pos[MOTOR_REQ_VERT[fmotor][i] != G_VERT])
-                motor_op_rot(MOTOR_REQ_VERT[fmotor][i], DIR_CW);
+
+        if (state.pos[MOTOR_REQ_VERT[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT[fmotor][1]] == G_HORIZ) {
+            motor_op_rots(MOTOR_REQ_VERT[fmotor][0], DIR_CW,
+                            MOTOR_REQ_VERT[fmotor][1], DIR_CCW);
+        } else if (state.pos[MOTOR_REQ_VERT[fmotor][0]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT[fmotor][0], DIR_CW);
+        } else if (state.pos[MOTOR_REQ_VERT[fmotor][1]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT[fmotor][1], DIR_CW);
         }
     }
     // retract all arms
@@ -208,7 +256,18 @@ void motor_op_rotate_cube(rubik_side_t bottom){
         motor_op_rotate_cube(R_FRONT);
     } else {
         int smotor = FACE_TO_MOTOR[bottom];
-        motor_op_arms_move(PERP_ARM[smotor], ARM_RETRACT, ROT_ARM[smotor], ARM_EXTEND);
+        motor_op_arm_move(PERP_ARM[smotor], ARM_RETRACT);
+        motor_op_arm_move(ROT_ARM[smotor], ARM_EXTEND);
+
+        if (state.pos[MOTOR_REQ_VERT_INV[smotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT_INV[smotor][1]] == G_HORIZ) {
+            motor_op_rots(MOTOR_REQ_VERT_INV[smotor][0], DIR_CW,
+                            MOTOR_REQ_VERT_INV[smotor][1], DIR_CCW);
+        } else if (state.pos[MOTOR_REQ_VERT_INV[smotor][0]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][0], DIR_CW);
+        } else if (state.pos[MOTOR_REQ_VERT_INV[smotor][1]] == G_HORIZ) {
+            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][1], DIR_CW);
+        }
+
         motor_op_rots(MOTOR_REQ_VERT[smotor][0], MOTOR_TO_ROT[smotor][0],
                         MOTOR_REQ_VERT[smotor][1], MOTOR_TO_ROT[smotor][1]);
     }

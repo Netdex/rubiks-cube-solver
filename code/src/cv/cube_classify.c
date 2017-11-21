@@ -6,7 +6,7 @@
 #include "cv/cube_classify.h"
 
 uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
-    system("fswebcam --device /dev/video1 -q -r 640x360 --no-banner -S 30 temp.jpg");
+    system("fswebcam --device /dev/video0 -q -r 640x480 --no-banner -S 30 temp.jpg");
     uint8_t* rgb_image = stbi_load("temp.jpg", width, height, bpp, 3);
     return rgb_image;
 }
@@ -16,9 +16,9 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
     // Regions to average
     // 3x3 is the face, 4 is x, y, w, h
     int regions[3][3][4] = {
-        {{120, 69, 100, 100}, {273, 135, 105, 42}, {434, 75, 100, 100}},
-        {{188, 224, 32, 102}, {282, 240, 80, 80}, {427, 230, 40, 100}},
-        {{119, 378, 100, 100}, {268, 375, 100, 40}, {427, 378, 100, 100}}
+        {{115, 69, 100, 100}, {268, 69, 100, 100}, {428, 69, 100, 100}},
+        {{112, 216, 100, 100}, {268, 223, 100, 100}, {425, 230, 100, 100}},
+        {{107, 368, 100, 100}, {261, 374, 100, 100}, {420, 377, 100, 100}}
     };
 
     assert(width == 640);
@@ -40,9 +40,9 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
                     ac.b += ((float)image[(i * width + j) * 3 + 2]) / 255;
                 }
             }
-            ac.r /= (float)((dx - 2 * dx * pad) * (dy - 2 * dy * pad));
-            ac.g /= (float)((dx - 2 * dx * pad) * (dy - 2 * dy * pad));
-            ac.b /= (float)((dx - 2 * dx * pad) * (dy - 2 * dy * pad));
+            ac.r /= regions[y][x][2] * regions[y][x][3];
+            ac.g /= regions[y][x][2] * regions[y][x][3];
+            ac.b /= regions[y][x][2] * regions[y][x][3];
             col_mat[y][x] = ac;
         }
     }
@@ -51,17 +51,29 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
 {
     rubik_color_t cube_col[6][3][3];
+    int white_centre = 0;
+    float white_max = 0;
+    for(int f = 0; f < 6; f++){
+        cube_col[f][1][1] = f;
+
+        hsv_t centre = rgb_to_hsv(colors[f][1][1]);
+        if (centre.val - centre.sat > white_max) {
+            white_centre = f;
+            white_max = centre.val - centre.sat;
+        }
+    }
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
             for(int x = 0; x < 3; x++){
-                if(x == 1 && y == 1){
-                    cube_col[f][y][x] = f;
-                } else {
+                hsv_t col = rgb_to_hsv(colors[f][y][x]);
+                printf("%.2f %.2f %.2f  ", col.hue, col.sat, col.val);
+                if(x != 1 || y != 1){
                     float minDist = FLT_MAX;
                     int minFace = 0;
                     // find center facelet with minimum weighted rgb dist
                     for(int mf = 0; mf < 6; mf++){
-                        float dist = color_rgb_dist_sq(colors[f][y][x], colors[mf][1][1]);
+                        //float dist = color_rgb_dist_sq(colors[f][y][x], colors[mf][1][1]);
+                        float dist = color_rgb_to_hue_dist(colors[f][y][x], colors[mf][1][1]);
                         if(dist < minDist){
                             minDist = dist;
                             minFace = mf;
@@ -70,7 +82,9 @@ rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
                     cube_col[f][y][x] = minFace;
                 }
             }
+            printf("\n");
         }
+        printf("\n");
     }
     rubik_cube_t cube = rubik_make_cube(cube_col);
     return cube;

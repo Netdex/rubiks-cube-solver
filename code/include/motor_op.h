@@ -23,6 +23,8 @@
 #define MOTOR_FB    4
 #define MOTOR_LR    5
 
+extern int FACE_TO_MOTOR[];
+
 /* rotate face, update state */
 void motor_op_rot(int motor, int op); 
 /* rotate two faces simultaneously */
