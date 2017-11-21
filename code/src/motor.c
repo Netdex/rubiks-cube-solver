@@ -93,18 +93,23 @@ void steps(int steps, motor m) {
 }
 
 void q_turn(motor m, int dir) {
-    steps((1024 + OVERSHOOT) * (dir * (-2) + 1), m);
-    steps(-OVERSHOOT * (dir * (-2) + 1), m);
+    if (dir == DIR_CW || dir == DIR_DCW) {
+        steps(1024 + OVERSHOOT, m);
+        steps(-OVERSHOOT, m);
+    } else {
+        steps(-(1024 + OVERSHOOT), m);
+        steps(OVERSHOOT, m);
+    }
 }
 
 void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
     for (int i = 0; i < 1024 + OVERSHOOT; i++) {
-        if (dir1) {
+        if (dir1 == DIR_CCW || dir1 == DIR_DCCW) {
             step(-i, m1);
         } else {
             step(i, m1);
         }
-        if (dir2) {
+        if (dir2 == DIR_CCW || dir2 == DIR_DCCW) {
             step(-i, m2);
         } else {
             step(i, m2);
@@ -112,12 +117,12 @@ void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
         nsleep(DELAY);
     }
     for (int i = 0; i < OVERSHOOT; i++) {
-        if (dir1) {
+        if (dir1 == DIR_CCW || dir1 == DIR_DCCW) {
             step(i, m1);
         } else {
             step(-i, m1);
         }
-        if (dir2) {
+        if (dir2 == DIR_CCW || dir2 == DIR_DCCW) {
             step(i, m2);
         } else {
             step(-i, m2);
@@ -126,19 +131,24 @@ void q_turn_d(motor m1, motor m2, int dir1, int dir2) {
     }
 }
 
-void h_turn(motor m) {
-    steps(2048 + OVERSHOOT, m);
-    steps(-OVERSHOOT, m);
+void h_turn(motor m, int dir) {
+    if (dir == DIR_CW || dir == DIR_DCW) {
+        steps(2048 + OVERSHOOT, m);
+        steps(-OVERSHOOT, m);
+    } else {
+        steps(-(2048 + OVERSHOOT), m);
+        steps(OVERSHOOT, m);
+    }
 }
 
 void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
     for (int i = 0; i < 2048 + OVERSHOOT; i++) {
-        if (dir1) {
+        if (dir1 == DIR_CCW || dir1 == DIR_DCCW) {
             step(-i, m1);
         } else {
             step(i, m1);
         }
-        if (dir2) {
+        if (dir2 == DIR_CCW || dir2 == DIR_DCCW) {
             step(-i, m2);
         } else {
             step(i, m2);
@@ -146,12 +156,12 @@ void h_turn_d(motor m1, motor m2, int dir1, int dir2) {
         nsleep(DELAY);
     }
     for (int i = 0; i < OVERSHOOT; i++) {
-        if (dir1) {
+        if (dir1 == DIR_CCW || dir1 == DIR_DCCW) {
             step(i, m1);
         } else {
             step(-i, m1);
         }
-        if (dir2) {
+        if (dir2 == DIR_CCW || dir2 == DIR_DCCW) {
             step(i, m2);
         } else {
             step(-i, m2);

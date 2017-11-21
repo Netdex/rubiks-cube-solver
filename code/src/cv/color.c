@@ -2,10 +2,10 @@
 
 #include "cv/color.h"
 
-hsv_colour rgb_to_hsv(int r, int g, int b) {
-    double rp = r / 255.0;
-    double gp = g / 255.0;
-    double bp = b / 255.0;
+hsv_t rgb_to_hsv(rgb_t a) {
+    double rp = a.r;
+    double gp = a.g;
+    double bp = a.b;
 
     double Cmax = max(rp, max(gp, bp));
     double Cmin = min(rp, min(gp, bp));
@@ -37,13 +37,29 @@ hsv_colour rgb_to_hsv(int r, int g, int b) {
     
     double val = Cmax;
 
-    hsv_colour ret = {hue, sat, val};
+    hsv_t ret = {hue, sat, val};
     return ret;
 }
 
 float color_rgb_dist_sq(rgb_t a, rgb_t b){
     //return (a.r - b.r) * (a.r - b.r) + (a.g - b.g) * (a.g - b.g) + (a.b - b.b) * (a.b - b.b);
-    return 2 * (a.r - b.r) * (a.r - b.r) + 4 * (a.g - b.g) * (a.g - b.g) + 3 * (a.b - b.b) * (a.b - b.b);
+    return (a.r - b.r) * (a.r - b.r) + (a.g - b.g) * (a.g - b.g) + (a.b - b.b) * (a.b - b.b);
+}
+
+float color_rgb_to_hue_dist(rgb_t a, rgb_t b) {
+    hsv_t ha = rgb_to_hsv(a);
+    hsv_t hb = rgb_to_hsv(b);
+
+    if (ha.sat <= 0.3 && hb.sat <= 0.3) {
+        return 0;
+    }
+    else if (min(ha.sat, hb.sat) <= 0.3 && max(ha.sat, hb.sat) > 0.3) {
+        return 9999;
+    }
+
+    return min(fabs(ha.hue - hb.hue),
+           min(fabs(360 + ha.hue - hb.hue),
+               fabs(ha.hue - hb.hue - 360)));
 }
 
 float color_rgb_dist(rgb_t a, rgb_t b){
