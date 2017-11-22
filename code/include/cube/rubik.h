@@ -1,3 +1,4 @@
+
 #ifndef RUBIK_H
 #define RUBIK_H
 
@@ -81,7 +82,7 @@ char* rubik_sequence_to_string(rubik_sequence_t *t);
 char* rubik_convert_facelet(rubik_cube_t c);
 
 /*
- * Rotates an individual face by some direction, 
+ * Rotates an individual face by some direction,
  * for rotating faces read from camera input
  */
 rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir);
@@ -97,20 +98,20 @@ rubik_sequence_t rubik_sequence_copy(rubik_sequence_t const *s);
 
 /*
  * Count the number of times a certain move appears in a rotated sequence
- * 
+ *
  * For minimizing the number of rotations
  */
 int rubik_sequence_count_op(rubik_sequence_t const *s, int idx, int len, rubik_side_t op, rubik_side_t rot);
 
 /*
  * Mutate a sequence so that it performs the same operations but in a different rotation
- * 
+ *
  * @param bottom    After the cube rotation, this face becomes the new bottom.
- * ie. R_LEFT would rotate the entire cube along the left/up-plane, 
+ * ie. R_LEFT would rotate the entire cube along the left/up-plane,
  * so that the left face is now on the bottom.
- * 
+ *
  * If bottom == NO_SIDE, do nothing.
- * 
+ *
  * Special cases:
  * R_UP means rotate twice along up/front-plane     (the same as doing R_FRONT twice)
  * R_DOWN means rotate twice along up/left-plane (the same as doing R_LEFT twice)

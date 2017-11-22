@@ -16,32 +16,32 @@ extern motor motors[6];
     motor_op_init();
 
     //steps(-40, motors[MOTOR_FB]);
-    
+
     char* checkerboards = "D2 F R2 U F' U' L D' U' F U F2 U F2 L B L' D' L' R U2 B' R' D' F ";
 
     rubik_sequence_t succ = rubik_make_sequence(checkerboards);
     rubik_sequence_t succc = rubik_cube_remove_up_down(&succ);
     rubik_sequence_display(&succc);
-    
+
     for(int i = 0; i < succc.length; i++){
         if(succc.operations[i].rotation != R_NOSIDE){
-            log_debug("execute rotate %c", 
+            log_debug("execute rotate %c",
                 RUBIK_MAP_ROT_CHAR[succc.operations[i].rotation]);
             motor_op_rotate_cube(succc.operations[i].rotation);
         }
 
-        if(succc.operations[i].side != R_NOSIDE 
+        if(succc.operations[i].side != R_NOSIDE
             && succc.operations[i].direction != R_NODIR){
-            log_debug("execute face %c%c", 
-                RUBIK_MAP_FACE_CHAR[succc.operations[i].side], 
+            log_debug("execute face %c%c",
+                RUBIK_MAP_FACE_CHAR[succc.operations[i].side],
                 RUBIK_MAP_DIR_CHAR[succc.operations[i].direction]);
 
             motor_op_rotate_face(
-                FACE_TO_MOTOR[succc.operations[i].side], 
+                FACE_TO_MOTOR[succc.operations[i].side],
                 succc.operations[i].direction);
         }
     }
-    
+
     motor_op_arms_move(ARM_FB, ARM_EXTEND, ARM_LR, ARM_EXTEND);
     */
 
@@ -52,7 +52,7 @@ extern motor motors[6];
     motor_op_rots(MOTOR_R, DIR_CW, MOTOR_L, DIR_CCW);
     motor_op_rots(MOTOR_F, DIR_CW, MOTOR_B, DIR_CCW);
     */
-   /* 
+   /*
     motor_op_rotate_cube(R_FRONT);
     motor_op_rotate_cube(R_RIGHT);
     motor_op_rotate_face(MOTOR_R, DIR_CW);
@@ -71,10 +71,10 @@ extern motor motors[6];
     q_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
     steps(2900, motors[5]);
     h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
-    
+
 
     motor_op_reset();
-    
+
     return 0;
 }*/
 
@@ -100,12 +100,12 @@ rubik_cube_t scan_cube(){
     rgb_t color_mat[6][3][3];
     int width, height, bpp, i = 0;
     // image every face, and create rgb matrices of each face based on average color
-    
+
     // Image front face
     motor_op_rotate_cube(R_BACK);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     i++;
@@ -113,29 +113,29 @@ rubik_cube_t scan_cube(){
     // Image back face
     motor_op_rotate_cube(R_FRONT);
     motor_op_rotate_cube(R_FRONT);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     i++;
-    
+
     // Image left face
     motor_op_rotate_cube(R_BACK);
     motor_op_rotate_cube(R_RIGHT);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     i++;
-    
+
     // Image right face
     motor_op_rotate_cube(R_LEFT);
     motor_op_rotate_cube(R_LEFT);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     i++;
@@ -145,9 +145,9 @@ rubik_cube_t scan_cube(){
     motor_op_rots(MOTOR_L, DIR_CW, MOTOR_R, DIR_CCW);
     motor_op_arm_move(ARM_LR, ARM_RETRACT);
     motor_op_arm_move(ARM_FB, ARM_EXTEND);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     i++;
@@ -155,18 +155,18 @@ rubik_cube_t scan_cube(){
     // Image bottom face
     motor_op_rotate_cube(R_FRONT);
     motor_op_rotate_cube(R_FRONT);
-    image = cube_classify_read_webcam(&width, &height, &bpp); 
+    image = cube_classify_read_webcam(&width, &height, &bpp);
     log_info("read face %d", i);
-    cube_classify_face_image_argb(image, bpp, width, height, 
+    cube_classify_face_image_argb(image, bpp, width, height,
         color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
     free(image);
     motor_op_rotate_cube(R_BACK);
 
-    /*for(int i = 0; i < 6; i++){ 
+    /*for(int i = 0; i < 6; i++){
         // remove "fake" for real case
-        image = cube_classify_read_webcam(&width, &height, &bpp); 
+        image = cube_classify_read_webcam(&width, &height, &bpp);
         log_info("read face %d", i);
-        cube_classify_face_image_argb(image, bpp, width, height, 
+        cube_classify_face_image_argb(image, bpp, width, height,
             color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
         free(image);
         if (SCAN_CUBE_OP_MAT[i] != R_NOSIDE) {
@@ -174,7 +174,7 @@ rubik_cube_t scan_cube(){
         }
     }*/
     log_trace("cube color output:");
-    
+
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
             char dbuf[1024] = {0};
@@ -191,7 +191,7 @@ rubik_cube_t scan_cube(){
     rubik_cube_t cube = cube_classify_from_colors(color_mat);
     log_info("cube built!");
 
-    // since the faces are not necessarily imaged in the correct orientation, 
+    // since the faces are not necessarily imaged in the correct orientation,
     // rotate them accordingly
     for(int i = 0; i < 6; i++){
         cube.faces[i] = rubik_face_rotate(cube.faces[i], SCAN_IMAGE_OP_MAT[i]);
@@ -200,6 +200,29 @@ rubik_cube_t scan_cube(){
 }
 
 int main(void){
+
+    rubik_sequence_t seqLOL = rubik_make_sequence("R2 L2 F2 B2 U2 D2 ");
+    //rubik_sequence_rotate(&seqLOL, 0, seqLOL.length, R_FRONT);
+
+    log_info("rotated sequence: %s", rubik_sequence_to_string(&seqLOL));
+
+
+    log_info("optimizing sequence...");
+    // TODO: transform sequence into a full rotation sequence w/o up and down
+    // The solution rubik_cube_remove_up_down needs to be fixed!
+    log_info("asdasdasd sequence...");
+
+    rubik_sequence_t fixed = rubik_cube_remove_up_down(&seqLOL);
+
+    log_info("rotated sequence: %s", rubik_sequence_to_string(&fixed));
+    /*
+    char *strL = rubik_sequence_to_string(&truncc);
+    log_info("optimized sequence: %s", strL);
+    free(strL);
+    */
+    return 0;
+
+
     log_set_level(LOG_TRACE);
 
     motor_op_init();
@@ -221,11 +244,11 @@ int main(void){
         }
         log_trace("");
     }
-    
+
     rubik_solution_t solution = rubik_solve(cube);
     log_info("generated sequence: %s", solution.str);
     assert(solution.error_code == 0);
-    
+
     rubik_sequence_rotate(&solution.seq, 0, solution.seq.length, R_FRONT);
 
     log_info("rotated sequence: %s", solution.str);
@@ -237,28 +260,28 @@ int main(void){
     char *str = rubik_sequence_to_string(&trunc);
     log_info("optimized sequence: %s", str);
     free(str);
-    
+
     log_info("running sequence");
     for(int i = 0; i < trunc.length; i++){
         if(trunc.operations[i].rotation != R_NOSIDE){
-            log_debug("execute rotate %c", 
+            log_debug("execute rotate %c",
                 RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
             motor_op_rotate_cube(trunc.operations[i].rotation);
         }
 
-        if(trunc.operations[i].side != R_NOSIDE 
+        if(trunc.operations[i].side != R_NOSIDE
             && trunc.operations[i].direction != R_NODIR){
-            log_debug("execute face %c%c", 
-                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
+            log_debug("execute face %c%c",
+                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side],
                 RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
 
             motor_op_rotate_face(
-                FACE_TO_MOTOR[trunc.operations[i].side], 
+                FACE_TO_MOTOR[trunc.operations[i].side],
                 trunc.operations[i].direction);
         }
     }
     log_info("done!");
-    
+
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
     motor_op_reset();
