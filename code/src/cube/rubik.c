@@ -142,7 +142,7 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
     switch(dir){
         case R_CCW:         return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_DOUBLE_CW);
         case R_DOUBLE_CW:   return rubik_face_rotate(rubik_face_rotate(face, R_CW), R_CW);
-        case R_CW:      
+        case R_CW:
         {
             rubik_face_t rot = {
                 {
@@ -152,7 +152,7 @@ rubik_face_t rubik_face_rotate(rubik_face_t face, rubik_dir_t dir){
                 }
             };
             return rot;
-        } 
+        }
         default: return face;
     }
 }
@@ -164,29 +164,59 @@ void rubik_sequence_display(rubik_sequence_t *s){
 }
 
 rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
-    // this is not an optimized solution.
+
     int l = s->length;
 
     rubik_op_t *ops = malloc(l * sizeof(rubik_op_t));
     memcpy(ops, s->operations, l * sizeof(rubik_op_t));
     rubik_sequence_t seq = {l, ops};
-    for(int i = 0; i < seq.length; i++){
+    rubik_side_t *moves = {R_NOSIDE, R_RIGHT, R_FRONT, R_LEFT, R_BACK};
+    int cnt = 0;
+    int min = 1000;
+    int moveID;
 
+
+    for(int i = 0; i < seq.length; i++){
         // don't run this algorithm twice
         assert(ops[i].rotation == R_NOSIDE);
 
-        if(ops[i].side == R_UP || ops[i].side == R_DOWN){
-            rubik_sequence_rotate(&seq, i, seq.length - i, R_RIGHT);
-            ops[i].rotation = R_RIGHT;
+        rubik_op_t *dp = malloc(l*5 * sizeof(rubik_op_t));
+        // run through all possible cube rotations from moves array
+        for (int j = 0; j < 5; j++) {
+
+          memcpy(&dp[l*j], seq.operations, l * sizeof(rubik_op_t));
+
+          rubik_op_t *dp_temp = malloc(l * sizeof(rubik_op_t));
+
+          memcpy(dp_temp, &dp[l*j], l*sizeof(rubik_op_t));
+
+          rubik_sequence_t seq_temp = {l, &dp_temp};
+          // rotate certain sequence by given moves
+          log_info("%d %d", i, seq_temp.length);
+          rubik_sequence_rotate(&seq_temp, i, seq_temp.length-i, moves[j]);
+          log_info("derp");
+          seq_temp.operations[i].rotation = moves[j];
+          memcpy(&dp[l*j], seq_temp.operations, l * sizeof(rubik_op_t));
+          // count to see how many rotations this move consists of
+          for(int k = 0; k < l; k++){
+            if (dp[j*l + k].side == R_UP) cnt++;
+            if (dp[j*l + k].side == R_DOWN) cnt++;
+          }
+          if (cnt < min) moveID = j;
+          cnt = 0;
         }
+        printf("Which move to do at which index???%d at %d", moveID, i);
+        rubik_sequence_rotate(&seq, i, seq.length - i, moves[moveID]);
+        ops[i].rotation = moves[moveID];
     }
     return seq;
 }
 
-/* 
- * Mapping that maps a face j after a rotation i 
- * to face RUBIK_ROTATION_MATRIX[i][j] 
- * 
+
+/*
+ * Mapping that maps a face j after a rotation i
+ * to face RUBIK_ROTATION_MATRIX[i][j]
+ *
  * TODO: check for mistakes
  */
 const char RUBIK_ROTATION_MATRIX[6][6] = {
