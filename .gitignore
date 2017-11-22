@@ -9,6 +9,8 @@ CMakeLists.txt
 
 code/bin/*
 code/obj/*
+code/debug/bin/*
+code/debug/obj/*
 
 # Swap
 [._]*.s[a-v][a-z]

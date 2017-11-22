@@ -137,7 +137,6 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
 
 void motor_op_init(){
 #ifndef NO_GPIO
-    log_debug("initializing motors...");
     iolib_init();
     for (int i = 0; i < 6; i++) {
         motor_init(motors[i]);
@@ -147,7 +146,6 @@ void motor_op_init(){
 
 void motor_op_reset(){
 #ifndef NO_GPIO
-    log_debug("resetting motors...");
     for (int i = 0; i < 6; i++) {
         motor_free(motors[i]);
     }

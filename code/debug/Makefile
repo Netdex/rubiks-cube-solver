@@ -1,10 +1,10 @@
 # OUTPUT BINARY NAME
-BINFILE := rbs1
+BINFILE := rbs1d
 
 # TARGET DIRECTORIES
 SDIR 	:= src
 ODIR 	:= obj
-LDIR 	:= lib
+LDIR 	:= ../lib
 BDIR 	:= bin
 IDIR 	:= include
 
@@ -14,11 +14,10 @@ LBBBIOLIB  := $(LDIR)/libBBBio.a
 
 # COMPILER PARAMETERS
 # TOOLCHAIN := 
-DEF		:= -D_POSIX_C_SOURCE=200809L -DLOG_USE_COLOR #-DNO_GPIO
+DEF		:= -D_POSIX_C_SOURCE=200809L
 INC 	:= -I$(IDIR) -I$(LBBBIOIDIR)
-CFLAGS 	:= $(INC) $(DEF) -Wall --std=c99 -O2 # -m64 -Wstrict-prototypes -Wmissing-prototypes -pedantic -Wshadow -Wpointer-arith -Wcast-qual 
-LIBS 	:= -L$(LDIR) -lm -lBBBio
-PCH 	:= $(IDIR)/stdafx.h
+CFLAGS 	:= $(INC) $(DEF) -Wall --std=c99 -O2 
+LIBS 	:= -L$(LDIR) -lm -lBBBio -lncurses -lpthread -ltinfo
 
 # SOURCE FILES
 DEPS 	:= $(shell find $(IDIR) -name '*.h')
@@ -32,10 +31,7 @@ all: $(BDIR)/$(BINFILE)
 $(LBBBIOLIB):
 	$(MAKE) -C $(LBBBIODIR)
 	
-$(PCH).gch: $(PCH)
-	$(TOOLCHAIN)gcc -c $< -o $@ $(CFLAGS)
-
-$(ODIR)/%.o: $(SDIR)/%.c $(DEPS) $(PCH).gch
+$(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	mkdir -p $(dir $@)
 	$(TOOLCHAIN)gcc -c -o $@ $< $(CFLAGS)
 
@@ -46,7 +42,6 @@ $(BDIR)/$(BINFILE): $(OBJ) $(LBBBIOLIB)
 clean:
 	find $(ODIR) -type f -name '*.o' -delete -print
 	rm -rf $(BDIR)/* -v
-	rm -f $(PCH).gch
 	#$(MAKE) -C $(LBBBIODIR) clean
 
 run: $(BDIR)/$(BINFILE)
