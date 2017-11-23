@@ -67,7 +67,7 @@ void motor_op_rot(int motor, int op, int overshoot){
         state.pos[motor] = !state.pos[motor];
         if (overshoot) {
             q_turn(motors[motor], op);
-        } eles {
+        } else {
             q_turn_nos(motors[motor], op);
         }
     }

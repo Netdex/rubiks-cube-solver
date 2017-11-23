@@ -31,9 +31,9 @@
 extern int FACE_TO_MOTOR[];
 
 /* rotate face, update state */
-void motor_op_rot(int motor, int op); 
+void motor_op_rot(int motor, int op, int overshoot); 
 /* rotate two faces simultaneously */
-void motor_op_rots(int motor1, int op1, int motor2, int op2);
+void motor_op_rots(int motor1, int op1, int motor2, int op2, int overshoot);
 /* retract/extend grabber arms, update state */
 void motor_op_arm_move(int arm, int op);
 /* retract/extend both grabber arms simulatenously, update state */

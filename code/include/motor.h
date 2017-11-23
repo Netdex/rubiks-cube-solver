@@ -32,8 +32,11 @@ void motor_free(motor m);
 void step(int step, motor m);
 void steps(int steps, motor m);
 void q_turn(motor m, int dir);
+void q_turn_nos(motor m, int dir);
 void q_turn_d(motor m1, motor m2, int dir1, int dir2);
+void q_turn_d_nos(motor m1, motor m2, int dir1, int dir2);
 void h_turn(motor m, int dir);
+void h_turn_nos(motor m, int dir);
 void h_turn_d(motor m1, motor m2, int dir1, int dir2);
-
+void h_turn_d_nos(motor m1, motor m2, int dir1, int dir2);
 #endif
