@@ -259,6 +259,9 @@ int main(void){
     }
     log_info("done!");
     
+    motor_op_arm_move(ARM_FB, ARM_EXTEND);
+    motor_op_arm_move(ARM_LR, ARM_EXTEND);
+
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
     motor_op_reset();

@@ -23,6 +23,15 @@ int MOTOR_REQ_VERT_INV[4][2] = {
     {MOTOR_L, MOTOR_R},     // L
     {MOTOR_R, MOTOR_L}      // R
 };
+/* given an arm motor, produces the motors which are on that axis */
+int ARM_TO_MOTOR[6][2] = {
+    {-1, -1},
+    {-1, -1},
+    {-1, -1},
+    {-1, -1},
+    {MOTOR_F, MOTOR_B}, // FB
+    {MOTOR_L, MOTOR_R}  // LR
+};
 /* parallel arm to rotation on motor i */
 int ROT_ARM[4] = { MOTOR_FB, MOTOR_FB, MOTOR_LR, MOTOR_LR};
 /* perpendicular arm to rotation on motor i */
@@ -105,6 +114,20 @@ void motor_op_arm_move(int arm, int op){
     if(delta != 0) {
         steps(delta, motors[arm]);
     }
+    
+    // when arms are extended, we always want to have the grippers vertical
+    // when they are horizontal, there is risk of collision
+    if (op == ARM_EXTEND) {
+        if (state.pos[ARM_TO_MOTOR[arm][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm][1]] == G_HORIZ) {
+            motor_op_rots(ARM_TO_MOTOR[arm][0], DIR_CW,
+                            ARM_TO_MOTOR[arm][1], DIR_CCW);
+        } else if (state.pos[ARM_TO_MOTOR[arm][0]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm][0], DIR_CW);
+        } else if (state.pos[ARM_TO_MOTOR[arm][1]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm][1], DIR_CW);
+        }
+    }
+
     motor_op_reset();
     //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }
@@ -131,6 +154,31 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
             step(sign2 * i, motors[arm2]);
         nsleep(DELAY);
     }
+
+    // when arms are extended, we always want to have the grippers vertical
+    // when they are horizontal, there is risk of collision
+    if (op1 == ARM_EXTEND) {
+        if (state.pos[ARM_TO_MOTOR[arm1][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm1][1]] == G_HORIZ) {
+            motor_op_rots(ARM_TO_MOTOR[arm1][0], DIR_CW,
+                            ARM_TO_MOTOR[arm1][1], DIR_CCW);
+        } else if (state.pos[ARM_TO_MOTOR[arm1][0]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm1][0], DIR_CW);
+        } else if (state.pos[ARM_TO_MOTOR[arm1][1]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm1][1], DIR_CW);
+        }
+    }
+
+    if (op2 == ARM_EXTEND) {
+        if (state.pos[ARM_TO_MOTOR[arm2][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm2][1]] == G_HORIZ) {
+            motor_op_rots(ARM_TO_MOTOR[arm2][0], DIR_CW,
+                            ARM_TO_MOTOR[arm2][1], DIR_CCW);
+        } else if (state.pos[ARM_TO_MOTOR[arm2][0]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm2][0], DIR_CW);
+        } else if (state.pos[ARM_TO_MOTOR[arm2][1]] == G_HORIZ) {
+            motor_op_rot(ARM_TO_MOTOR[arm2][1], DIR_CW);
+        }
+    }
+
     motor_op_reset();
     //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
 }

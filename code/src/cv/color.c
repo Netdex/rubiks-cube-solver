@@ -50,10 +50,10 @@ float color_rgb_to_hue_dist(rgb_t a, rgb_t b) {
     hsv_t ha = rgb_to_hsv(a);
     hsv_t hb = rgb_to_hsv(b);
 
-    if (ha.sat <= 0.3 && hb.sat <= 0.3) {
+    if (ha.sat <= 0.25 && hb.sat <= 0.25) {
         return 0;
     }
-    else if (min(ha.sat, hb.sat) <= 0.3 && max(ha.sat, hb.sat) > 0.3) {
+    else if (min(ha.sat, hb.sat) <= 0.25 && max(ha.sat, hb.sat) > 0.25) {
         return 9999;
     }
 
