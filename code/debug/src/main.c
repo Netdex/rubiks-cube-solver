@@ -4,6 +4,16 @@
 
 #include "motor.h"
 
+/* GPIO pinout for motors */
+motor motors[] = {
+    {9, 11, 12, 13, 14}, // F
+    {8, 37, 38, 39, 40}, // B
+    {8, 33, 34, 35, 36}, // L
+    {8, 11, 12, 13, 14}, // R
+    {8, 7, 8, 9, 10},    // F/B retract/extend
+    {8, 15, 16, 17, 18}, // L/R retract/extend
+};
+
 union tick_state {
 	struct {
 		int f;
@@ -17,13 +27,18 @@ union tick_state {
 } tick = {{0,0,0,0,0,0}};
 
 int main(void){
+	iolib_init();
+    for (int i = 0; i < 6; i++) {
+        motor_init(motors[i]);
+	}
+
 	int ch;
 
 	initscr();
 	raw();	
 	keypad(stdscr, TRUE);
-	noecho();	
-
+	noecho();
+	
 	attron(A_BOLD);
 	printw("rbs1d - debug");	
 	attroff(A_BOLD);
@@ -38,21 +53,27 @@ int main(void){
 		switch(ch){
 		case KEY_UP:
 			tick.f += d; 
+			step(tick.f, motors[0]);
 			break;
 		case KEY_DOWN:
 			tick.b += d;
+			step(tick.b, motors[1]);
 			break;
 		case KEY_LEFT:
 			tick.l += d;
+			step(tick.l, motors[2]);
 			break;
 		case KEY_RIGHT:
 			tick.r += d;
+			step(tick.r, motors[3]);
 			break;
 		case '[':
 			tick.fb += d;
+			step(tick.fb, motors[4]);
 			break;
 		case ']':
 			tick.lr += d;
+			step(tick.lr, motors[5]);
 			break;
 		case '=':
 			d = 1;

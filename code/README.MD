@@ -16,12 +16,33 @@ This method is difficult to get working correctly, as there are 2^4*3^2 possible
 Do a search on all possible moves (there's actually not that many), that leads to our desired state.
 
 In such a search, only expand nodes that lead to a valid state, and only expand nodes that lead to our desired state. With these conditions, very few moves actually need to be explored.
+Don't expand nodes that change the cube state. We know we are done we are allowed to perform the elementary operation that leads us directly to our desired state.
 
 An advantage of this strategy is that we can weight operations by their cost (extending arms is much slower than rotating an arm). 
 Using a shortest path algorithm, we easily find a time optimized solution to perform a move.
 
 This strategy may be computationally expensive.
 
+```
+Node Expansion Rules by Elementary Operation:
+
+Rotate Face
+- perpendicular grabbers must be vertical
+- parallel grabbers must be retracted
+- perpendicular grabbers must be retracted
+
+Double Rotate Face
+...
+
+Extend/Retract Arm to State
+- Extend case:
+
+- Retract case:
+
+- Partial case: we should probably just scrap partial
+
+Double Extend/Retract Arm to State
+```
 ### Dependency Graph
 Each operation (ie. rotating a face, rotating the cube) has a list of dependencies (ie. perpendicular grabbers must be vertical).
 

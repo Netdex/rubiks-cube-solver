@@ -51,16 +51,8 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
 {
     rubik_color_t cube_col[6][3][3];
-    int white_centre = 0;
-    float white_max = 0;
     for(int f = 0; f < 6; f++){
         cube_col[f][1][1] = f;
-
-        hsv_t centre = rgb_to_hsv(colors[f][1][1]);
-        if (centre.val - centre.sat > white_max) {
-            white_centre = f;
-            white_max = centre.val - centre.sat;
-        }
     }
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){
