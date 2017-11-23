@@ -56,6 +56,7 @@ union motor_op_state {
 } state = {{G_VERT, G_VERT, G_VERT, G_VERT, ARM_EXTEND, ARM_EXTEND}};
 
 void motor_op_rot(int motor, int op){
+#ifndef NO_GPIO
     assert(motor >= MOTOR_F && motor <= MOTOR_R);
     assert(op >= DIR_CW && op <= DIR_DCW);
     
@@ -66,10 +67,11 @@ void motor_op_rot(int motor, int op){
         q_turn(motors[motor], op);
     }
     motor_op_reset();
-    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
+#endif
 }
 
 void motor_op_rots(int motor1, int op1, int motor2, int op2){
+#ifndef NO_GPIO
     assert(motor1 >= MOTOR_F && motor1 <= MOTOR_R);
     assert(motor2 >= MOTOR_F && motor2 <= MOTOR_R);
     assert(op1 >= DIR_CW && op1 <= DIR_DCW);
@@ -93,10 +95,11 @@ void motor_op_rots(int motor1, int op1, int motor2, int op2){
         }
     }
     motor_op_reset();
-    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
+#endif
 }
 
 void motor_op_arm_move(int arm, int op){
+#ifndef NO_GPIO
     assert(arm >= MOTOR_FB && arm <= MOTOR_LR);
     assert(op >= ARM_RETRACT && op <= ARM_EXTEND);
 
@@ -106,10 +109,11 @@ void motor_op_arm_move(int arm, int op){
         steps(delta, motors[arm]);
     }
     motor_op_reset();
-    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
+#endif
 }
 
 void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
+#ifndef NO_GPIO
     assert(arm1 >= ARM_FB && arm1 <= ARM_LR);
     assert(arm2 >= ARM_FB && arm2 <= ARM_LR);
     assert(arm1 != arm2);
@@ -132,7 +136,7 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
         nsleep(DELAY);
     }
     motor_op_reset();
-    //log_trace("F: %d B: %d L: %d R: %d FB: %d LR: %d", state.pos[0], state.pos[1], state.pos[2], state.pos[3], state.pos[4], state.pos[5]);
+#endif
 }
 
 void motor_op_init(){
