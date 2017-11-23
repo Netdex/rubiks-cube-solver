@@ -29,16 +29,20 @@ OBJ 	:= $(addprefix $(ODIR)/, $(SOURCES:$(SDIR)/%.c=%.o))
 
 all: $(BDIR)/$(BINFILE)
 
+# COMPILE EXTERNAL BBBIOLIB
 $(LBBBIOLIB):
 	$(MAKE) -C $(LBBBIODIR)
-	
+
+# PRECOMPIELD HEADER
 $(PCH).gch: $(PCH)
 	$(TOOLCHAIN)gcc -c $< -o $@ $(CFLAGS)
 
+# OBJECT FILES
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS) $(PCH).gch
 	mkdir -p $(dir $@)
 	$(TOOLCHAIN)gcc -c -o $@ $< $(CFLAGS)
 
+# BINARY FILE
 $(BDIR)/$(BINFILE): $(OBJ) $(LBBBIOLIB)
 	mkdir -p $(BDIR)
 	$(TOOLCHAIN)gcc -o $@ $^ $(CFLAGS) $(LIBS)

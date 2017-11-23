@@ -2,6 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+
+   OLD CODE
+   My attempt at writing a GPIO library using the file mapped io
+   it works but is incredibly slow, and cannot step fast enough to drive motors
+   Obsolete
+
+*/
+
 void exp_pin(int n) {
     char cmd[60];
     sprintf(cmd, "echo %d > /sys/class/gpio/export", n);

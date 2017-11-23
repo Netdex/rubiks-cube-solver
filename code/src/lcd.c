@@ -2,6 +2,13 @@
 
 #include "lcd.h"
 
+/*
+ *
+ * Utility code for using the LCD
+ * Unfortunately due to power issues the LCD is not included on the final version
+ * Could still be added in relatively quickly with this
+ * */
+
 void set_pin(int pin, int val) {
     if (val) {
         pin_high(8, pin);

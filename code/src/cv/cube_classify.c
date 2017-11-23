@@ -6,11 +6,13 @@
 #include "cv/cube_classify.h"
 
 uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
+    // take a picture and read it
     system("fswebcam --device /dev/video0 -q -r 640x480 --no-banner -S 30 temp.jpg");
     uint8_t* rgb_image = stbi_load("temp.jpg", width, height, bpp, 3);
     return rgb_image;
 }
 
+// Goes through and image, picks out the individual stickers, averages the color over that region
 void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, rgb_t col_mat[3][3])
 {
     // Regions to average
@@ -48,19 +50,13 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
     }
 }
 
+// Given raw RGB color values, picks a number to represent each of the six colors on the rubik's cube
+// Then, classifies each sticker to be one of those colors.
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
 {
     rubik_color_t cube_col[6][3][3];
-    int white_centre = 0;
-    float white_max = 0;
     for(int f = 0; f < 6; f++){
         cube_col[f][1][1] = f;
-
-        hsv_t centre = rgb_to_hsv(colors[f][1][1]);
-        if (centre.val - centre.sat > white_max) {
-            white_centre = f;
-            white_max = centre.val - centre.sat;
-        }
     }
     for(int f = 0; f < 6; f++){
         for(int y = 0; y < 3; y++){

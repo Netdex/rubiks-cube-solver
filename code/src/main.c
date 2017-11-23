@@ -9,75 +9,6 @@
 
 #include "stb_image.h"
 
-extern motor motors[6];
-
-/*int main(void) {
-
-    motor_op_init();
-
-    //steps(-40, motors[MOTOR_FB]);
-    
-    char* checkerboards = "D2 F R2 U F' U' L D' U' F U F2 U F2 L B L' D' L' R U2 B' R' D' F ";
-
-    rubik_sequence_t succ = rubik_make_sequence(checkerboards);
-    rubik_sequence_t succc = rubik_cube_remove_up_down(&succ);
-    rubik_sequence_display(&succc);
-    
-    for(int i = 0; i < succc.length; i++){
-        if(succc.operations[i].rotation != R_NOSIDE){
-            log_debug("execute rotate %c", 
-                RUBIK_MAP_ROT_CHAR[succc.operations[i].rotation]);
-            motor_op_rotate_cube(succc.operations[i].rotation);
-        }
-
-        if(succc.operations[i].side != R_NOSIDE 
-            && succc.operations[i].direction != R_NODIR){
-            log_debug("execute face %c%c", 
-                RUBIK_MAP_FACE_CHAR[succc.operations[i].side], 
-                RUBIK_MAP_DIR_CHAR[succc.operations[i].direction]);
-
-            motor_op_rotate_face(
-                FACE_TO_MOTOR[succc.operations[i].side], 
-                succc.operations[i].direction);
-        }
-    }
-    
-    motor_op_arms_move(ARM_FB, ARM_EXTEND, ARM_LR, ARM_EXTEND);
-    */
-
-    //steps(-40, motors[MOTOR_LR]);
-
-    //motor_op_rot(MOTOR_R, DIR_CW);
-    /*
-    motor_op_rots(MOTOR_R, DIR_CW, MOTOR_L, DIR_CCW);
-    motor_op_rots(MOTOR_F, DIR_CW, MOTOR_B, DIR_CCW);
-    */
-   /* 
-    motor_op_rotate_cube(R_FRONT);
-    motor_op_rotate_cube(R_RIGHT);
-    motor_op_rotate_face(MOTOR_R, DIR_CW);
-    */
-
-    //motor_op_arms_move(ARM_FB, ARM_EXTEND, ARM_LR, ARM_EXTEND);
-    //motor_op_arms_move(ARM_FB, ARM_RETRACT, ARM_LR, ARM_RETRACT);
-
-    /*
-    h_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
-    h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
-    steps(-2900, motors[4]);
-    q_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
-    steps(2900, motors[4]);
-    steps(-2900, motors[5]);
-    q_turn_d(motors[0], motors[1], DIR_CW, DIR_CCW);
-    steps(2900, motors[5]);
-    h_turn_d(motors[2], motors[3], DIR_CW, DIR_CW);
-    
-
-    motor_op_reset();
-    
-    return 0;
-}*/
-
 /* full cube rotations to perform while scanning */
 rubik_side_t    SCAN_CUBE_OP_MAT[]           = {R_LEFT, R_LEFT, R_LEFT, R_FRONT, R_UP, R_NOSIDE};
 /* face rotations to orient final cube */
@@ -96,6 +27,8 @@ uint8_t* fake_cube_classify_read_webcam(int *width, int *height, int *bpp){
 }
 
 rubik_cube_t scan_cube(){
+#ifndef NO_GPIO
+    log_info("performing cube scan...");
     uint8_t *image;
     rgb_t color_mat[6][3][3];
     int width, height, bpp, i = 0;
@@ -142,7 +75,7 @@ rubik_cube_t scan_cube(){
 
     // Image top face
     motor_op_rotate_cube(R_RIGHT);
-    motor_op_rots(MOTOR_L, DIR_CW, MOTOR_R, DIR_CCW);
+    motor_op_rots(MOTOR_L, DIR_CW, MOTOR_R, DIR_CCW, 0);
     motor_op_arm_move(ARM_LR, ARM_RETRACT);
     motor_op_arm_move(ARM_FB, ARM_EXTEND);
     image = cube_classify_read_webcam(&width, &height, &bpp); 
@@ -162,17 +95,6 @@ rubik_cube_t scan_cube(){
     free(image);
     motor_op_rotate_cube(R_BACK);
 
-    /*for(int i = 0; i < 6; i++){ 
-        // remove "fake" for real case
-        image = cube_classify_read_webcam(&width, &height, &bpp); 
-        log_info("read face %d", i);
-        cube_classify_face_image_argb(image, bpp, width, height, 
-            color_mat[SCAN_ORDER_TO_FACE_ORDER[i]]);
-        free(image);
-        if (SCAN_CUBE_OP_MAT[i] != R_NOSIDE) {
-            motor_op_rotate_cube(SCAN_CUBE_OP_MAT[i]);
-        }
-    }*/
     log_trace("cube color output:");
     
     for(int f = 0; f < 6; f++){
@@ -197,6 +119,20 @@ rubik_cube_t scan_cube(){
         cube.faces[i] = rubik_face_rotate(cube.faces[i], SCAN_IMAGE_OP_MAT[i]);
     }
     return cube;
+#else
+    // for debugging
+    char c[6][3][3] = {0};
+    printf("Enter cube: \n");
+    scanf("\n");
+    for(int f = 0; f < 6; f++){
+        for(int y = 0; y < 3; y++){
+            for(int x = 0; x < 3; x++)
+                scanf("%c", &c[f][y][x]);
+        }
+    }
+    rubik_cube_t cube = rubik_make_cube_from_char(c);
+    return cube;
+#endif
 }
 
 int main(void){
@@ -207,63 +143,110 @@ int main(void){
     motor_op_arm_move(ARM_LR, ARM_RETRACT);
     motor_op_arm_move(ARM_FB, ARM_RETRACT);
 
-    rubik_cube_t cube = scan_cube();
-    log_trace("cube matrix output:");
-    for(int f = 0; f < 6; f++){
-        for(int y = 0; y < 3; y++){
-            char dbuf[1024] = {0};
-            for(int x = 0; x < 3; x++){
-                char tbuf[256] = {0};
-                sprintf(tbuf, "%d ", cube.faces[f].colors[y][x]);
-                strcat(dbuf, tbuf);
+    do {
+        int c;
+        do {
+            printf(
+                "\n\nrbs1 - rubik's cube solver\n"
+                "1. solve cube to solved state\n"
+                "2. solve cube to defined state\n");
+            scanf("%d", &c);
+        } while(c < 1 || c > 2);
+
+        rubik_solution_t solution;
+        rubik_cube_t cube = scan_cube();
+        log_trace("cube matrix output:");
+        for(int f = 0; f < 6; f++){
+            for(int y = 0; y < 3; y++){
+                char dbuf[1024] = {0};
+                for(int x = 0; x < 3; x++){
+                    char tbuf[256] = {0};
+                    sprintf(tbuf, "%d ", cube.faces[f].colors[y][x]);
+                    strcat(dbuf, tbuf);
+                }
+                log_trace("%s", dbuf);
             }
-            log_trace("%s", dbuf);
-        }
-        log_trace("");
-    }
-    
-    rubik_solution_t solution = rubik_solve(cube);
-    log_info("generated sequence: %s", solution.str);
-    assert(solution.error_code == 0);
-    
-    rubik_sequence_rotate(&solution.seq, 0, solution.seq.length, R_FRONT);
-
-    log_info("rotated sequence: %s", solution.str);
-
-    log_info("optimizing sequence...");
-    // TODO: transform sequence into a full rotation sequence w/o up and down
-    // The solution rubik_cube_remove_up_down needs to be fixed!
-    rubik_sequence_t trunc = rubik_cube_remove_up_down(&solution.seq);
-    char *str = rubik_sequence_to_string(&trunc);
-    log_info("optimized sequence: %s", str);
-    free(str);
-    
-    log_info("running sequence");
-    for(int i = 0; i < trunc.length; i++){
-        if(trunc.operations[i].rotation != R_NOSIDE){
-            log_debug("execute rotate %c", 
-                RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
-            motor_op_rotate_cube(trunc.operations[i].rotation);
+            log_trace("");
         }
 
-        if(trunc.operations[i].side != R_NOSIDE 
-            && trunc.operations[i].direction != R_NODIR){
-            log_debug("execute face %c%c", 
-                RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
-                RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
-
-            motor_op_rotate_face(
-                FACE_TO_MOTOR[trunc.operations[i].side], 
-                trunc.operations[i].direction);
+        switch(c){
+            case 1:
+            {
+                solution = rubik_solve(cube);
+            }
+            break;
+            case 2:
+            {
+                /*
+                    EXAMPLE:
+                    GOBWWWGOBYGYYOYYBYOBROBROBRBRGYYYBRGWBWWRWWGWOGROGROGR
+                    YWYWYWYWYOROROROROBGBGBGBGBWYWYWYWYWRORORORORGBGBGBGBG
+                */
+                char c[6][3][3];
+                printf("enter target state: \n");
+                scanf("\n");
+                for(int f = 0; f < 6; f++){
+                    for(int y = 0; y < 3; y++){
+                        for(int x = 0; x < 3; x++)
+                            scanf("%c", &c[f][y][x]);
+                    }
+                }
+                rubik_cube_t target = rubik_make_cube_from_char(c);
+                solution = rubik_solve_pattern(cube, target);
+            }
+            break;
         }
-    }
-    log_info("done!");
+        
+        log_info("generated sequence: %s", solution.str);
+        if(solution.error_code != 0){
+            motor_op_arm_move(ARM_LR, ARM_EXTEND);
+            motor_op_arm_move(ARM_FB, ARM_EXTEND);
+            log_error("unexpected solution code, invalid cube state!");
+            continue;
+        }
+        
+        rubik_sequence_rotate(&solution.seq, 0, solution.seq.length, R_FRONT);
+
+        log_info("rotated sequence: %s", solution.str);
+
+        log_info("optimizing sequence...");
+        // TODO: transform sequence into a full rotation sequence w/o up and down
+        // The solution rubik_cube_remove_up_down needs to be fixed!
+        rubik_sequence_t trunc = rubik_cube_remove_up_down(&solution.seq);
+        char *str = rubik_sequence_to_string(&trunc);
+        log_info("optimized sequence: %s", str);
+        free(str);
+        
+        log_info("running sequence");
+        for(int i = 0; i < trunc.length; i++){
+            if(trunc.operations[i].rotation != R_NOSIDE){
+                log_debug("execute rotate %c", 
+                    RUBIK_MAP_ROT_CHAR[trunc.operations[i].rotation]);
+                motor_op_rotate_cube(trunc.operations[i].rotation);
+            }
+
+            if(trunc.operations[i].side != R_NOSIDE 
+                && trunc.operations[i].direction != R_NODIR){
+                log_debug("execute face %c%c", 
+                    RUBIK_MAP_FACE_CHAR[trunc.operations[i].side], 
+                    RUBIK_MAP_DIR_CHAR[trunc.operations[i].direction]);
+
+                motor_op_rotate_face(
+                    FACE_TO_MOTOR[trunc.operations[i].side], 
+                    trunc.operations[i].direction);
+            }
+        }
+        log_info("done!");
+        rubik_destroy_solution(&solution);
+        rubik_destroy_sequence(&trunc);
+    } while(1);
     
     motor_op_arm_move(ARM_FB, ARM_EXTEND);
     motor_op_arm_move(ARM_LR, ARM_EXTEND);
 
     rubik_destroy_solution(&solution);
     rubik_destroy_sequence(&trunc);
+
     motor_op_reset();
     return 0;
 }
