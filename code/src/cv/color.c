@@ -2,6 +2,7 @@
 
 #include "cv/color.h"
 
+// Converts a value in RGB colorspace to one in HSV colorspace, for easier color recognition
 hsv_t rgb_to_hsv(rgb_t a) {
     double rp = a.r;
     double gp = a.g;
@@ -41,19 +42,24 @@ hsv_t rgb_to_hsv(rgb_t a) {
     return ret;
 }
 
+// Calculates the squared distance of each component R, G, and B, to tell how different two colors
+// are. However, this algorithm is not actually very good for rubik's cube faces, so it is not used
 float color_rgb_dist_sq(rgb_t a, rgb_t b){
     //return (a.r - b.r) * (a.r - b.r) + (a.g - b.g) * (a.g - b.g) + (a.b - b.b) * (a.b - b.b);
     return (a.r - b.r) * (a.r - b.r) + (a.g - b.g) * (a.g - b.g) + (a.b - b.b) * (a.b - b.b);
 }
 
+// Takes in two RGB colors and calculates their distance in hue: which is very accurate for determining
+// what color a sticker on a rubik's cube is. There is a special case when both colors are white
+// (saturation less than 0.25), because the hue is inconsistent for white faces (colorless)
 float color_rgb_to_hue_dist(rgb_t a, rgb_t b) {
     hsv_t ha = rgb_to_hsv(a);
     hsv_t hb = rgb_to_hsv(b);
 
-    if (ha.sat <= 0.3 && hb.sat <= 0.3) {
+    if (ha.sat <= 0.25 && hb.sat <= 0.25) {
         return 0;
     }
-    else if (min(ha.sat, hb.sat) <= 0.3 && max(ha.sat, hb.sat) > 0.3) {
+    else if (min(ha.sat, hb.sat) <= 0.25 && max(ha.sat, hb.sat) > 0.25) {
         return 9999;
     }
 
@@ -62,6 +68,7 @@ float color_rgb_to_hue_dist(rgb_t a, rgb_t b) {
                fabs(ha.hue - hb.hue - 360)));
 }
 
+// The unsquared distance in RGB colorspace
 float color_rgb_dist(rgb_t a, rgb_t b){
     return sqrt(color_rgb_dist_sq(a,b));
 }

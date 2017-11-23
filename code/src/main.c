@@ -75,7 +75,7 @@ rubik_cube_t scan_cube(){
 
     // Image top face
     motor_op_rotate_cube(R_RIGHT);
-    motor_op_rots(MOTOR_L, DIR_CW, MOTOR_R, DIR_CCW);
+    motor_op_rots(MOTOR_L, DIR_CW, MOTOR_R, DIR_CCW, 0);
     motor_op_arm_move(ARM_LR, ARM_RETRACT);
     motor_op_arm_move(ARM_FB, ARM_EXTEND);
     image = cube_classify_read_webcam(&width, &height, &bpp); 

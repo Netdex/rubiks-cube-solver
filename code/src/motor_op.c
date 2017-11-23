@@ -52,22 +52,30 @@ union motor_op_state {
     int pos[6];    // grabber positions
 } state = {{G_VERT, G_VERT, G_VERT, G_VERT, ARM_EXTEND, ARM_EXTEND}};
 
-void motor_op_rot(int motor, int op){
+void motor_op_rot(int motor, int op, int overshoot){
 #ifndef NO_GPIO
     assert(motor >= MOTOR_F && motor <= MOTOR_R);
     assert(op >= DIR_CW && op <= DIR_DCW);
     
     if(op >= DIR_DCW){
-        h_turn(motors[motor], op);
+        if (overshoot) {
+            h_turn(motors[motor], op);
+        } else {
+            h_turn_nos(motors[motor], op);
+        }
     } else {
         state.pos[motor] = !state.pos[motor];
-        q_turn(motors[motor], op);
+        if (overshoot) {
+            q_turn(motors[motor], op);
+        } eles {
+            q_turn_nos(motors[motor], op);
+        }
     }
     motor_op_reset();
 #endif
 }
 
-void motor_op_rots(int motor1, int op1, int motor2, int op2){
+void motor_op_rots(int motor1, int op1, int motor2, int op2, int overshoot){
 #ifndef NO_GPIO
     assert(motor1 >= MOTOR_F && motor1 <= MOTOR_R);
     assert(motor2 >= MOTOR_F && motor2 <= MOTOR_R);
@@ -80,16 +88,31 @@ void motor_op_rots(int motor1, int op1, int motor2, int op2){
     
     // Move both motors together.
     if (op1 >= DIR_DCW && op2 >= DIR_DCW) {
-        h_turn_d(motors[motor1], motors[motor2], op1, op2);
-
+        if (overshoot) {
+            h_turn_d(motors[motor1], motors[motor2], op1, op2);
+        } else {
+            h_turn_d_nos(motors[motor1], motors[motor2], op1, op2);
+        }
     }
     else {
-        q_turn_d(motors[motor1], motors[motor2], op1, op2);
+        if (overshoot) {
+            q_turn_d(motors[motor1], motors[motor2], op1, op2);
+        } else {
+            q_turn_d_nos(motors[motor1], motors[motor2], op1, op2);
+        }
         if (op1 >= DIR_DCW) {
-            q_turn(motors[motor1], op1);
+            if (overshoot) {
+                q_turn(motors[motor1], op1);
+            } else {
+                q_turn_nos(motors[motor1], op1);
+            }
         }
         if (op2 >= DIR_DCW) {
-            q_turn(motors[motor2], op2);
+            if (overshoot) {
+                q_turn(motors[motor2], op2);
+            } else {
+                q_turn_nos(motors[motor2], op2);
+            }
         }
     }
     motor_op_reset();
@@ -198,11 +221,11 @@ void motor_op_rotate_face(int fmotor, int op){
         // make parallel grabbers vertical
         if (state.pos[MOTOR_REQ_VERT_INV[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT_INV[fmotor][1]] == G_HORIZ) {
             motor_op_rots(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW,
-                            MOTOR_REQ_VERT_INV[fmotor][1], DIR_CCW);
+                            MOTOR_REQ_VERT_INV[fmotor][1], DIR_CCW, 0);
         } else if (state.pos[MOTOR_REQ_VERT_INV[fmotor][0]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW, 0);
         } else if (state.pos[MOTOR_REQ_VERT_INV[fmotor][1]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][1], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT_INV[fmotor][1], DIR_CW, 0);
         }
 
         // orient perpendicular grabbers to vertical
@@ -212,11 +235,11 @@ void motor_op_rotate_face(int fmotor, int op){
         // make perpendicular grabbers vertical
         if (state.pos[MOTOR_REQ_VERT[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT[fmotor][1]] == G_HORIZ) {
             motor_op_rots(MOTOR_REQ_VERT[fmotor][0], DIR_CW,
-                            MOTOR_REQ_VERT[fmotor][1], DIR_CCW);
+                            MOTOR_REQ_VERT[fmotor][1], DIR_CCW, 0);
         } else if (state.pos[MOTOR_REQ_VERT[fmotor][0]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT[fmotor][0], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT[fmotor][0], DIR_CW, 0);
         } else if (state.pos[MOTOR_REQ_VERT[fmotor][1]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT[fmotor][1], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT[fmotor][1], DIR_CW, 0);
         }
     }
     // retract all arms
@@ -224,7 +247,7 @@ void motor_op_rotate_face(int fmotor, int op){
     motor_op_arm_move(ROT_ARM[fmotor], ARM_RETRACT);
 
     // perform rotation
-    motor_op_rot(fmotor, op);
+    motor_op_rot(fmotor, op, 1);
 #endif
 }
 
@@ -265,15 +288,15 @@ void motor_op_rotate_cube(rubik_side_t bottom){
 
         if (state.pos[MOTOR_REQ_VERT_INV[smotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT_INV[smotor][1]] == G_HORIZ) {
             motor_op_rots(MOTOR_REQ_VERT_INV[smotor][0], DIR_CW,
-                            MOTOR_REQ_VERT_INV[smotor][1], DIR_CCW);
+                            MOTOR_REQ_VERT_INV[smotor][1], DIR_CCW, 0);
         } else if (state.pos[MOTOR_REQ_VERT_INV[smotor][0]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][0], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][0], DIR_CW, 0);
         } else if (state.pos[MOTOR_REQ_VERT_INV[smotor][1]] == G_HORIZ) {
-            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][1], DIR_CW);
+            motor_op_rot(MOTOR_REQ_VERT_INV[smotor][1], DIR_CW, 0);
         }
 
         motor_op_rots(MOTOR_REQ_VERT[smotor][0], MOTOR_TO_ROT[smotor][0],
-                        MOTOR_REQ_VERT[smotor][1], MOTOR_TO_ROT[smotor][1]);
+                        MOTOR_REQ_VERT[smotor][1], MOTOR_TO_ROT[smotor][1], 0);
     }
 #endif
 }

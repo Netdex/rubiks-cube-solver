@@ -7,6 +7,11 @@
 #define BBB_LO 0
 #define BBB_HI 1
 
+/*
+ * Obsolete library functions for using BBB gpios
+ * Too slow to drive a stepper motor
+ * */
+
 void exp_pin(int n);
 void set_dir(int n, int dir);
 int read_val(int n);

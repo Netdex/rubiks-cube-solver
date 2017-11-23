@@ -5,6 +5,9 @@
 
 #include <BBBiolib.h>
 
+/*
+ * Library to abstract use of the LCD character display
+ * */
 
 typedef struct {
     int rs_pin;

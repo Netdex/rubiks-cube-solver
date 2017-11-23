@@ -1,7 +1,6 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-
 #include <BBBiolib.h>
 
 #include "util/nsleep.h" 
@@ -14,6 +13,12 @@
 #define DIR_DCW     2
 #define DIR_DCCW    3
 
+
+/*
+ * Struct representing a single motor, by providing the pin
+ * numbers for each of the control pins, as well as the bank
+ * that the pins are on
+ * */
 typedef struct {
     int bank;
     int pin1;

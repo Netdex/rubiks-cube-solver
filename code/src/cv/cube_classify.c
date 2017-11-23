@@ -12,6 +12,7 @@ uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
     return rgb_image;
 }
 
+// Goes through and image, picks out the individual stickers, averages the color over that region
 void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int height, rgb_t col_mat[3][3])
 {
     // Regions to average
@@ -49,6 +50,8 @@ void cube_classify_face_image_argb(uint8_t *image, int bpp, int width, int heigh
     }
 }
 
+// Given raw RGB color values, picks a number to represent each of the six colors on the rubik's cube
+// Then, classifies each sticker to be one of those colors.
 rubik_cube_t cube_classify_from_colors(rgb_t colors[6][3][3])
 {
     rubik_color_t cube_col[6][3][3];
