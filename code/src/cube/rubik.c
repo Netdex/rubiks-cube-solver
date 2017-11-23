@@ -186,8 +186,6 @@ rubik_sequence_t rubik_cube_remove_up_down(rubik_sequence_t *s){
 /* 
  * Mapping that maps a face j after a rotation i 
  * to face RUBIK_ROTATION_MATRIX[i][j] 
- * 
- * TODO: check for mistakes
  */
 const char RUBIK_ROTATION_MATRIX[6][6] = {
     {3, 1, 5, 0, 4, 2},  // U
