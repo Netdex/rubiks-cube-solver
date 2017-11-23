@@ -145,11 +145,11 @@ void motor_op_arm_move(int arm, int op){
     if (op == ARM_EXTEND) {
         if (state.pos[ARM_TO_MOTOR[arm][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm][1]] == G_HORIZ) {
             motor_op_rots(ARM_TO_MOTOR[arm][0], DIR_CW,
-                            ARM_TO_MOTOR[arm][1], DIR_CCW);
+                            ARM_TO_MOTOR[arm][1], DIR_CCW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm][0]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm][0], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm][0], DIR_CW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm][1]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm][1], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm][1], DIR_CW, 0);
         }
     }
 
@@ -187,22 +187,22 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
     if (op1 == ARM_EXTEND) {
         if (state.pos[ARM_TO_MOTOR[arm1][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm1][1]] == G_HORIZ) {
             motor_op_rots(ARM_TO_MOTOR[arm1][0], DIR_CW,
-                            ARM_TO_MOTOR[arm1][1], DIR_CCW);
+                            ARM_TO_MOTOR[arm1][1], DIR_CCW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm1][0]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm1][0], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm1][0], DIR_CW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm1][1]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm1][1], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm1][1], DIR_CW, 0);
         }
     }
 
     if (op2 == ARM_EXTEND) {
         if (state.pos[ARM_TO_MOTOR[arm2][0]] == G_HORIZ && state.pos[ARM_TO_MOTOR[arm2][1]] == G_HORIZ) {
             motor_op_rots(ARM_TO_MOTOR[arm2][0], DIR_CW,
-                            ARM_TO_MOTOR[arm2][1], DIR_CCW);
+                            ARM_TO_MOTOR[arm2][1], DIR_CCW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm2][0]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm2][0], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm2][0], DIR_CW, 0);
         } else if (state.pos[ARM_TO_MOTOR[arm2][1]] == G_HORIZ) {
-            motor_op_rot(ARM_TO_MOTOR[arm2][1], DIR_CW);
+            motor_op_rot(ARM_TO_MOTOR[arm2][1], DIR_CW, 0);
         }
     }
 

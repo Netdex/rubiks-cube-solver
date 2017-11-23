@@ -148,10 +148,13 @@ int main(void){
         do {
             printf(
                 "\n\nrbs1 - rubik's cube solver\n"
+                "0. quit\n"
                 "1. solve cube to solved state\n"
                 "2. solve cube to defined state\n");
             scanf("%d", &c);
-        } while(c < 1 || c > 2);
+        } while(c < 0 || c > 2);
+
+        if (c == 0) break;
 
         rubik_solution_t solution;
         rubik_cube_t cube = scan_cube();
@@ -243,9 +246,6 @@ int main(void){
     
     motor_op_arm_move(ARM_FB, ARM_EXTEND);
     motor_op_arm_move(ARM_LR, ARM_EXTEND);
-
-    rubik_destroy_solution(&solution);
-    rubik_destroy_sequence(&trunc);
 
     motor_op_reset();
     return 0;
