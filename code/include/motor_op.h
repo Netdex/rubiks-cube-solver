@@ -1,5 +1,10 @@
 
-/* Motor control abstractions. */
+/* 
+ * Motor control abstractions. 
+ * 
+ * Manages and controls motor state, and plans motor motions
+ * to avoid self-collision, in a partially optimized manner
+*/
 
 #ifndef MOTOR_OP_H
 #define MOTOR_OP_H

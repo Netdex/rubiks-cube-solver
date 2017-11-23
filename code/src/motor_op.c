@@ -2,9 +2,6 @@
 #include "motor_op.h"
 #include "motor.h"
 
-/* DOCUMENTATION IS IN motor_op.h */
-/* This file would probably benefit from flowcharts */
-
 /* map rubik_face_t to appropriate motor */
 int FACE_TO_MOTOR[] = {-1, 3, 0, -1, 2, 1};
 /* index i, is motor steps to achieve operation i */
@@ -77,6 +74,7 @@ void motor_op_rots(int motor1, int op1, int motor2, int op2){
     assert(op1 >= DIR_CW && op1 <= DIR_DCW);
     assert(op2 >= DIR_CW && op2 <= DIR_DCW);
 
+    // update state
     if (op1 < DIR_DCW) state.pos[motor1] = !state.pos[motor1];
     if (op2 < DIR_DCW) state.pos[motor2] = !state.pos[motor2];
     
@@ -103,6 +101,7 @@ void motor_op_arm_move(int arm, int op){
     assert(arm >= MOTOR_FB && arm <= MOTOR_LR);
     assert(op >= ARM_RETRACT && op <= ARM_EXTEND);
 
+    // calculate distance to new position
     int delta = ARM_OP_STEPS[state.pos[arm]] - ARM_OP_STEPS[op];
     state.pos[arm] = op;
     if(delta != 0) {
@@ -118,6 +117,7 @@ void motor_op_arms_move(int arm1, int op1, int arm2, int op2){
     assert(arm2 >= ARM_FB && arm2 <= ARM_LR);
     assert(arm1 != arm2);
 
+    // update state
     int delta1 = ARM_OP_STEPS[state.pos[arm1]] - ARM_OP_STEPS[op1];
     int delta2 = ARM_OP_STEPS[state.pos[arm2]] - ARM_OP_STEPS[op2];
 
@@ -195,6 +195,7 @@ void motor_op_rotate_face(int fmotor, int op){
     // check if perpendicular grabbers are vertical
     if(state.pos[MOTOR_REQ_VERT[fmotor][0]] != G_VERT
     || state.pos[MOTOR_REQ_VERT[fmotor][1]] != G_VERT){
+        // make parallel grabbers vertical
         if (state.pos[MOTOR_REQ_VERT_INV[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT_INV[fmotor][1]] == G_HORIZ) {
             motor_op_rots(MOTOR_REQ_VERT_INV[fmotor][0], DIR_CW,
                             MOTOR_REQ_VERT_INV[fmotor][1], DIR_CCW);
@@ -208,6 +209,7 @@ void motor_op_rotate_face(int fmotor, int op){
         motor_op_arm_move(ROT_ARM[fmotor], ARM_RETRACT);
         motor_op_arm_move(PERP_ARM[fmotor], ARM_PARTIAL);
 
+        // make perpendicular grabbers vertical
         if (state.pos[MOTOR_REQ_VERT[fmotor][0]] == G_HORIZ && state.pos[MOTOR_REQ_VERT[fmotor][1]] == G_HORIZ) {
             motor_op_rots(MOTOR_REQ_VERT[fmotor][0], DIR_CW,
                             MOTOR_REQ_VERT[fmotor][1], DIR_CCW);

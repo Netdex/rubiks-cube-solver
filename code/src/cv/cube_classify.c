@@ -6,6 +6,7 @@
 #include "cv/cube_classify.h"
 
 uint8_t* cube_classify_read_webcam(int *width, int *height, int *bpp){
+    // take a picture and read it
     system("fswebcam --device /dev/video0 -q -r 640x480 --no-banner -S 30 temp.jpg");
     uint8_t* rgb_image = stbi_load("temp.jpg", width, height, bpp, 3);
     return rgb_image;
